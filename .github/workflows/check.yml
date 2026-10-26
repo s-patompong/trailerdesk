@@ -22,6 +22,8 @@ jobs:
         with:
           node-version-file: .nvmrc
           cache: pnpm
+      - name: Prepare test configuration
+        run: cp .env.example .env
       - run: pnpm install --frozen-lockfile
       - run: pnpm secrets:check && pnpm secrets:history
       - run: pnpm db:up
