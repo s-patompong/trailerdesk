@@ -4,6 +4,13 @@ One Worker serves Hono APIs and React Router framework SSR. Business services en
 permissions and call repositories. Repositories compose all business queries through
 the tenant helper. Infrastructure modules never import feature code.
 
+The same Worker has three fixed web surfaces. `ADMIN_APP_URL` serves platform operators and
+their independent Better Auth realm; `APP_URL` serves dealership staff, organizations and
+private APIs; `PUBLIC_APP_URL` serves `/d/*`, `/embed/*` and public APIs. The entry handler
+canonicalizes safe requests and rejects cross-surface mutations. Static build and development
+assets are shared. Local `admin.localhost` / `app.localhost` / `localhost` mirrors the
+production hostname boundary without separate deployments.
+
 ```mermaid
 flowchart TD
   Browser --> Worker[server/index.ts]

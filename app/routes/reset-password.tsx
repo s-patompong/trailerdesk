@@ -1,5 +1,7 @@
+import { env } from "cloudflare:workers";
 import { Link } from "react-router";
 
+import { isAdminOrigin } from "../../server/platform/origins";
 import { NewPassword } from "../components/auth/new-password";
 import { ResetRequest } from "../components/auth/reset-request";
 import {
@@ -13,7 +15,10 @@ import {
 import type { Route } from "./+types/reset-password";
 
 export function loader({ request }: Route.LoaderArgs) {
-  return { token: new URL(request.url).searchParams.get("token") };
+  return {
+    platform: isAdminOrigin(request, env),
+    token: new URL(request.url).searchParams.get("token"),
+  };
 }
 export default function ResetPassword({ loaderData }: Route.ComponentProps) {
   return (
@@ -29,9 +34,12 @@ export default function ResetPassword({ loaderData }: Route.ComponentProps) {
         </CardHeader>
         <CardContent>
           {loaderData.token ? (
-            <NewPassword token={loaderData.token} />
+            <NewPassword
+              token={loaderData.token}
+              platform={loaderData.platform}
+            />
           ) : (
-            <ResetRequest />
+            <ResetRequest platform={loaderData.platform} />
           )}
         </CardContent>
       </Card>

@@ -18,8 +18,12 @@ test("simultaneous holds have one winner and the alarm releases it and emails on
   browser,
 }) => {
   test.setTimeout(65000);
-  const owner = await browser.newContext({ baseURL: "http://localhost:5174" });
-  const sales = await browser.newContext({ baseURL: "http://localhost:5174" });
+  const owner = await browser.newContext({
+    baseURL: "http://app.localhost:5174",
+  });
+  const sales = await browser.newContext({
+    baseURL: "http://app.localhost:5174",
+  });
   try {
     await signInApi(owner, "owner");
     await signInApi(sales, "sales");
@@ -65,7 +69,7 @@ test("a manager can extend and release a hold without waiting for its alarm", as
   browser,
 }) => {
   const context = await browser.newContext({
-    baseURL: "http://localhost:5174",
+    baseURL: "http://app.localhost:5174",
   });
   let trailerId: string | undefined;
   try {

@@ -22,9 +22,11 @@ test("exhausted document jobs reach the DLQ, show needs attention and allow mana
 }) => {
   test.setTimeout(120000);
   const manager = await browser.newContext({
-    baseURL: "http://localhost:5174",
+    baseURL: "http://app.localhost:5174",
   });
-  const sales = await browser.newContext({ baseURL: "http://localhost:5174" });
+  const sales = await browser.newContext({
+    baseURL: "http://app.localhost:5174",
+  });
   let documentId: string | undefined;
   try {
     await signInApi(manager, "manager");

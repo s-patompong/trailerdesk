@@ -7,7 +7,7 @@ test("quote form validates cents, adds an option and shows the completed sale an
   browser,
 }) => {
   const context = await browser.newContext({
-    baseURL: "http://localhost:5174",
+    baseURL: "http://app.localhost:5174",
   });
   let trailerId: string | undefined;
   try {

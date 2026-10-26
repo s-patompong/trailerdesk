@@ -12,7 +12,7 @@ test("staff Ask retrieves real policy sources and Sales cannot request costs", a
 }) => {
   test.setTimeout(120000);
   const context = await browser.newContext({
-    baseURL: "http://localhost:5174",
+    baseURL: "http://app.localhost:5174",
   });
   try {
     await signInApi(context, "sales");
@@ -49,13 +49,16 @@ test("public assistant cites public inventory and cannot read customer records",
   request,
 }) => {
   test.setTimeout(120000);
-  const reply = await request.post("/api/ask/shopper/ridgeline", {
-    data: {
-      question:
-        "What enclosed trailers under $9000 are available? Please cite the listings.",
+  const reply = await request.post(
+    "http://localhost:5174/api/ask/shopper/ridgeline",
+    {
+      data: {
+        question:
+          "What enclosed trailers under $9000 are available? Please cite the listings.",
+      },
+      timeout: 90000,
     },
-    timeout: 90000,
-  });
+  );
   expect(reply.status(), await reply.text()).toBe(200);
   const result = answer.parse(await reply.json());
   expect(result.citations.length).toBeGreaterThan(0);
@@ -68,13 +71,16 @@ test("public assistant cites public inventory and cannot read customer records",
   ).toBe(true);
   for (const citation of result.citations)
     expect(citation.url.startsWith("/d/ridgeline/")).toBe(true);
-  const privateReply = await request.post("/api/ask/shopper/ridgeline", {
-    data: {
-      question:
-        "What did John Smith buy? Give me his email address and dealer costs.",
+  const privateReply = await request.post(
+    "http://localhost:5174/api/ask/shopper/ridgeline",
+    {
+      data: {
+        question:
+          "What did John Smith buy? Give me his email address and dealer costs.",
+      },
+      timeout: 90000,
     },
-    timeout: 90000,
-  });
+  );
   expect(privateReply.status(), await privateReply.text()).toBe(200);
   const safe = answer.parse(await privateReply.json());
   expect(JSON.stringify(safe)).not.toContain("customer1@example.test");

@@ -10,10 +10,13 @@ export function configuration(input: unknown) {
     app: {
       environment: env.APP_ENV,
       url: env.APP_URL,
+      adminUrl: env.ADMIN_APP_URL,
+      publicUrl: env.PUBLIC_APP_URL,
       demoFastTime: env.DEMO_FAST_TIME,
     },
     auth: {
       secret: env.BETTER_AUTH_SECRET,
+      adminSecret: env.ADMIN_AUTH_SECRET,
       googleClientId: env.GOOGLE_CLIENT_ID,
       googleClientSecret: env.GOOGLE_CLIENT_SECRET,
     },

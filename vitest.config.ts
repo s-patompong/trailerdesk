@@ -14,8 +14,11 @@ export default defineConfig({
         compatibilityFlags: ["nodejs_compat"],
         bindings: {
           APP_ENV: "test",
-          APP_URL: "http://localhost:5174",
+          APP_URL: "http://app.localhost:5174",
+          ADMIN_APP_URL: "http://admin.localhost:5174",
+          PUBLIC_APP_URL: "http://localhost:5174",
           BETTER_AUTH_SECRET: "test-only-secret-for-isolated-workers-tests",
+          ADMIN_AUTH_SECRET: "test-only-secret-for-platform-admin-tests",
           EMAIL_FROM: "mail@trailerdesk.test",
           EMAIL_DRIVER: "outbox",
           MAILPIT_URL: "http://127.0.0.1:18025",

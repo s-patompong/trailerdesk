@@ -170,7 +170,7 @@ export function sendDealMessage(
     const messages = {
       thanks: {
         subject: `Thank you from ${customer.storeName}`,
-        body: `Thanks for buying your trailer from us, ${customer.customerName}.\n\nYour bill of sale: ${configuration(env).app.url}/d/${customer.slug}/bills/${quote.pdfToken}`,
+        body: `Thanks for buying your trailer from us, ${customer.customerName}.\n\nYour bill of sale: ${configuration(env).app.publicUrl}/d/${customer.slug}/bills/${quote.pdfToken}`,
         progress: "Thank-you sent; check-in scheduled",
       },
       "check-in": {

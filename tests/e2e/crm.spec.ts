@@ -10,7 +10,7 @@ test("Sales can add a validated customer, move a lead and save notes in the cust
   browser,
 }) => {
   const context = await browser.newContext({
-    baseURL: "http://localhost:5174",
+    baseURL: "http://app.localhost:5174",
   });
   const name = `Browser Customer ${crypto.randomUUID()}`;
   let customerId: string | undefined;
@@ -89,7 +89,7 @@ test("switching dealerships changes both the inventory and authorized record acc
   browser,
 }) => {
   const context = await browser.newContext({
-    baseURL: "http://localhost:5174",
+    baseURL: "http://app.localhost:5174",
   });
   try {
     await signInApi(context, "owner");

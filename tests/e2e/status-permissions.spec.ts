@@ -15,9 +15,11 @@ test("Sales can update availability while descriptions and dealer cost remain pr
   browser,
 }) => {
   const manager = await browser.newContext({
-    baseURL: "http://localhost:5174",
+    baseURL: "http://app.localhost:5174",
   });
-  const sales = await browser.newContext({ baseURL: "http://localhost:5174" });
+  const sales = await browser.newContext({
+    baseURL: "http://app.localhost:5174",
+  });
   let id: string | undefined;
   try {
     await signInApi(manager, "manager");

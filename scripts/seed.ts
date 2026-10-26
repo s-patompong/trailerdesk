@@ -12,6 +12,10 @@ import {
 import { customers, leads } from "../server/platform/schema/crm";
 import { publicForms } from "../server/platform/schema/forms";
 import { dealership, trailers } from "../server/platform/schema/inventory";
+import {
+  account as platformAccount,
+  user as platformUser,
+} from "../server/platform/schema/platform-auth";
 
 import { databaseEnv } from "./database-env";
 import { seedSearch } from "./seed-search";
@@ -47,6 +51,12 @@ const makes = [
   "Sure-Trac",
 ];
 async function seedIdentity() {
+  await seedDealerships();
+  await seedStaff();
+  await seedPlatformAdmin();
+}
+
+async function seedDealerships() {
   for (const store of stores) {
     await db.insert(organization).values(store).onConflictDoNothing();
     await db
@@ -74,8 +84,17 @@ async function seedIdentity() {
           "Thanks! The dealership received your inquiry and will be in touch.",
         allowedOrigins: ["http://127.0.0.1:5174", "http://localhost:5174"],
       })
-      .onConflictDoNothing();
+      .onConflictDoUpdate({
+        target: publicForms.id,
+        set: {
+          allowedOrigins: ["http://127.0.0.1:5174", "http://localhost:5174"],
+          updatedAt: new Date(),
+        },
+      });
   }
+}
+
+async function seedStaff() {
   for (const role of ["owner", "manager", "sales"] as const) {
     const id = `local-${role}`;
     await db
@@ -121,6 +140,29 @@ async function seedIdentity() {
         })
         .onConflictDoNothing();
   }
+}
+
+async function seedPlatformAdmin() {
+  const platformId = "local-platform-admin";
+  await db
+    .insert(platformUser)
+    .values({
+      id: platformId,
+      name: "TrailerDesk Platform Admin",
+      email: "platform-admin@trailerdesk.test",
+      emailVerified: true,
+    })
+    .onConflictDoNothing();
+  await db
+    .insert(platformAccount)
+    .values({
+      id: `${platformId}-account`,
+      userId: platformId,
+      accountId: platformId,
+      providerId: "credential",
+      password: await hashPassword(password),
+    })
+    .onConflictDoNothing();
 }
 function trailerSeedRow(index: number) {
   const tenant = index < 40 ? "ridgeline" : "cedar";

@@ -5,7 +5,7 @@ import { z } from "zod";
 
 import { withSeedWorker } from "./seed-worker";
 
-const origin = "http://localhost:5174";
+const origin = "http://app.localhost:5174";
 const cookieJar = new Map<string, string>();
 const documentList = z.array(
   z.object({ id: z.string(), title: z.string(), status: z.string() }),
