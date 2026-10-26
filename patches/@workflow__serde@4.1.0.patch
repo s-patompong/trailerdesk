@@ -1,0 +1,9 @@
+diff --git a/dist/index.js b/dist/index.js
+index 74242f695c4cd3623ce064f7c8bc693694e49de2..7a1bb5f36fe3dd881faf79ce7000bdef4dac85b7 100644
+--- a/dist/index.js
++++ b/dist/index.js
+@@ -27,4 +27,3 @@ export const WORKFLOW_SERIALIZE = Symbol.for('workflow-serialize');
+  * @see WORKFLOW_SERIALIZE for usage example
+  */
+ export const WORKFLOW_DESERIALIZE = Symbol.for('workflow-deserialize');
+-//# sourceMappingURL=index.js.map

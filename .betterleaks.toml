@@ -1,0 +1,21 @@
+# The image digest pins the upstream rules. Review rule changes with scanner upgrades.
+betterleaksMinVersion = "v1.9.0"
+prefilter = '''
+filter.matchesAny(attributes["path"], [
+  `(?:^|/)(?:node_modules|\.git|\.wrangler|\.react-router|build|test-results|playwright-report)(?:/|$)`,
+  `(?:^|/)pnpm-lock\.yaml$`,
+  `(?:^|/)worker-configuration\.d\.ts$`,
+  `(?i)\.(?:jpe?g|png|webp|woff2?)$`
+])
+'''
+# Public local-only seed credentials. No file-wide exception, and real credentials still fail.
+filter = '''
+finding["secret"] in [
+  "trailerdesk_local",
+  "TrailerDesk-Local-2026!",
+  "postgres://trailerdesk:trailerdesk_local@localhost:5440/trailerdesk",
+  "postgres://trailerdesk:trailerdesk_local@localhost:5440/trailerdesk_test"
+]
+'''
+[extend]
+useDefault = true

@@ -1,0 +1,33 @@
+services:
+  postgres:
+    image: pgvector/pgvector:pg17
+    ports:
+      - "127.0.0.1:5440:5432"
+    environment:
+      POSTGRES_USER: trailerdesk
+      POSTGRES_PASSWORD: trailerdesk_local
+      POSTGRES_DB: trailerdesk
+    volumes:
+      - trailerdesk_pg:/var/lib/postgresql/data
+      - ./scripts/init-test-db.sql:/docker-entrypoint-initdb.d/10-test.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U trailerdesk -d trailerdesk"]
+      interval: 2s
+      retries: 30
+  mailpit:
+    image: axllent/mailpit:v1.32.0
+    ports:
+      - "127.0.0.1:18025:8025"
+      - "127.0.0.1:11025:1025"
+    environment:
+      MP_DATABASE: /data/mailpit.db
+      MP_MAX_MESSAGES: 5000
+    volumes:
+      - trailerdesk_mail:/data
+    healthcheck:
+      test: ["CMD", "/mailpit", "readyz"]
+      interval: 2s
+      retries: 30
+volumes:
+  trailerdesk_mail:
+  trailerdesk_pg:

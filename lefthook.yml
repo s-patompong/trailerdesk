@@ -1,0 +1,10 @@
+pre-commit:
+  commands:
+    staged:
+      run: pnpm exec lint-staged
+    secrets:
+      run: pnpm secrets:staged
+commit-msg:
+  commands:
+    message:
+      run: pnpm exec commitlint --edit {1}

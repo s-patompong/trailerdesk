@@ -1,0 +1,15 @@
+{
+  "threshold": 3,
+  "minTokens": 75,
+  "minLines": 8,
+  "reporters": ["console"],
+  "ignore": [
+    "**/node_modules/**",
+    "**/components/ui/**",
+    "**/drizzle/**",
+    "**/*.d.ts",
+    "**/build/**",
+    "**/.react-router/**",
+    "**/.wrangler/**"
+  ]
+}

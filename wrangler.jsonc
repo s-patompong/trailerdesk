@@ -1,0 +1,109 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "trailerdesk",
+  "main": "server/index.ts",
+  "compatibility_date": "2026-10-19",
+  "compatibility_flags": ["nodejs_compat"],
+  "observability": {
+    "enabled": true,
+  },
+  "upload_source_maps": true,
+  "vars": {
+    "APP_ENV": "development",
+    "APP_URL": "http://localhost:5174",
+    "EMAIL_DRIVER": "mailpit",
+    "MAILPIT_URL": "http://127.0.0.1:18025",
+    "EMAIL_FROM": "mail@trailerdesk.test",
+    "LLM_PROVIDER": "workers-ai",
+    "DEMO_FAST_TIME": "true",
+    "TURNSTILE_SITE_KEY": "1x00000000000000000000AA",
+  },
+  "hyperdrive": [
+    {
+      "binding": "DB",
+      "id": "00000000000000000000000000000001",
+      "localConnectionString": "postgres://trailerdesk:trailerdesk_local@localhost:5440/trailerdesk",
+    },
+    {
+      "binding": "DB_CACHED",
+      "id": "00000000000000000000000000000002",
+      "localConnectionString": "postgres://trailerdesk:trailerdesk_local@localhost:5440/trailerdesk",
+    },
+  ],
+  "kv_namespaces": [
+    {
+      "binding": "CACHE",
+      "id": "00000000000000000000000000000003",
+    },
+  ],
+  "r2_buckets": [
+    {
+      "binding": "FILES",
+      "bucket_name": "trailerdesk-files",
+    },
+  ],
+  "ai": {
+    "binding": "AI",
+    "remote": true,
+  },
+  "ratelimits": [
+    {
+      "name": "PUBLIC_RATE_LIMIT",
+      "namespace_id": "1001",
+      "simple": {
+        "limit": 20,
+        "period": 60,
+      },
+    },
+  ],
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "TRAILER_HOLD",
+        "class_name": "TrailerHold",
+      },
+    ],
+  },
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_sqlite_classes": ["TrailerHold"],
+    },
+  ],
+  "triggers": {
+    "crons": ["*/15 * * * *"],
+  },
+  "queues": {
+    "producers": [
+      {
+        "binding": "JOBS",
+        "queue": "trailerdesk-jobs",
+      },
+      {
+        "binding": "JOBS_DLQ",
+        "queue": "trailerdesk-jobs-dlq",
+      },
+    ],
+    "consumers": [
+      {
+        "queue": "trailerdesk-jobs",
+        "max_batch_size": 5,
+        "max_batch_timeout": 1,
+        "max_retries": 3,
+        "dead_letter_queue": "trailerdesk-jobs-dlq",
+      },
+      {
+        "queue": "trailerdesk-jobs-dlq",
+        "max_batch_size": 5,
+        "max_batch_timeout": 1,
+      },
+    ],
+  },
+  "workflows": [
+    {
+      "binding": "DEAL_CLOSING",
+      "name": "trailerdesk-deal-closing",
+      "class_name": "DealClosing",
+    },
+  ],
+}

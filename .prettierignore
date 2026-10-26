@@ -1,0 +1,10 @@
+node_modules
+pnpm-lock.yaml
+.wrangler
+.react-router
+build
+worker-configuration.d.ts
+playwright-report
+test-results
+coverage
+.agents/skills

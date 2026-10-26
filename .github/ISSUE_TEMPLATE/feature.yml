@@ -1,0 +1,20 @@
+name: Feature
+description: Propose a dealership improvement
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What dealership problem should this solve?
+    validations:
+      required: true
+  - type: textarea
+    id: outcome
+    attributes:
+      label: What should the user be able to do?
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Rules and acceptance checks
+      description: Include roles, tenant boundaries and what is outside the change.

@@ -1,0 +1,19 @@
+allowBuilds:
+  esbuild: true
+  workerd: true
+  lefthook: true
+  unrs-resolver: true
+  core-js-pure: false
+minimumReleaseAgeExclude:
+  - "@better-auth/core@1.7.13"
+  - "@better-auth/drizzle-adapter@1.7.13"
+  - "@better-auth/kysely-adapter@1.7.13"
+  - "@better-auth/memory-adapter@1.7.13"
+  - "@better-auth/mongo-adapter@1.7.13"
+  - "@better-auth/prisma-adapter@1.7.13"
+  - "@better-auth/telemetry@1.7.13"
+  - better-auth@1.7.13
+  - miniflare@5.20261023.0-beta
+  - wrangler@4.153.0
+patchedDependencies:
+  "@workflow/serde@4.1.0": patches/@workflow__serde@4.1.0.patch

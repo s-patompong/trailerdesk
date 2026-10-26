@@ -1,0 +1,15 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "entry": [
+    "app/routes/**/*.{ts,tsx}",
+    "app/components/ui/**/*.{ts,tsx}",
+    "scripts/*.ts"
+  ],
+  "project": [
+    "app/**/*.{ts,tsx,css}",
+    "server/**/*.ts",
+    "scripts/**/*.ts",
+    "tests/**/*.ts"
+  ],
+  "ignoreDependencies": ["cloudflare", "@react-router/node"]
+}
