@@ -22,6 +22,15 @@ Browser tests must isolate their own test records and clean up only IDs they cre
 Never use a production URL or database. Remote AI calls are integration checks,
 not mocked unit evidence; record actual model responses and failures separately.
 
+GitHub pull requests run the secret-free `check` job: install, secret scans, migrations,
+`pnpm check` and the production build. The credentialed `browser` job runs only after a
+trusted `main` push or a manual workflow dispatch. GitHub withholds Actions secrets from
+Dependabot and fork pull requests, and privileged workflows must not execute untrusted PR
+code with secrets. Do not work around that boundary with `pull_request_target`. Review a
+PR first, then use the trusted post-merge or manual run for the real Workers AI browser
+suite. See GitHub's [Dependabot restrictions](https://docs.github.com/en/code-security/reference/supply-chain-security/dependabot-on-actions)
+and [secure-use guidance](https://docs.github.com/en/actions/reference/security/secure-use).
+
 Browser coverage also exercises real Workers AI citations/listing drafts, vPIC prefill,
 Mailpit messages, hold conflicts/alarms, PDFs, closing follow-ups, invitations and reset
 links, PDF indexing/privacy, cron summaries, lead drag/drop and dealership switching.

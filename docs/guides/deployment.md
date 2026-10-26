@@ -7,6 +7,14 @@ resources before the user's Phase 3 approval. Placeholder resource IDs in
 Phase 2 requires the user's GitHub repository name and visibility, incremental
 conventional commits, push and a verified green CI run.
 
+The Phase 2 browser job starts the local Worker with its Workers AI binding in remote
+mode. Its account-scoped `CLOUDFLARE_API_TOKEN` therefore needs `Workers Scripts: Edit`
+for Wrangler's edge-preview session and `Workers AI: Read` plus `Workers AI: Edit` for
+the bound model. Store the account ID as the `CLOUDFLARE_ACCOUNT_ID` repository variable;
+never commit either value. The secret-free quality job runs for pull requests, while the
+credentialed browser job runs only for trusted `main` pushes or manual dispatches. This
+is CI authentication, not permission to deploy or create Cloudflare resources.
+
 Phase 3 requires approval of hosted Postgres (Neon or PlanetScale), two Hyperdrive
 configurations, KV, R2, queues/DLQ, Turnstile, email, Google OAuth and secrets.
 Enable pgvector before migrations. Never copy local demo accounts into production
