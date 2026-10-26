@@ -31,7 +31,7 @@ class ProviderEmailSender implements EmailSender {
     await deliverOnce(this.db, message, () => this.deliver(message));
   }
 }
-export function emailSender(env: Env, db: Database): EmailSender {
+export function emailSender(env: unknown, db: Database): EmailSender {
   const config = configuration(env).mail;
   switch (config.driver) {
     case "outbox":
