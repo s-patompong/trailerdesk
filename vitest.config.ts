@@ -26,6 +26,7 @@ export default defineConfig({
         },
         hyperdrives: {
           DB: databaseEnv.TEST_DATABASE_URL,
+          DB_CACHED: databaseEnv.TEST_DATABASE_URL,
         },
       },
     }),

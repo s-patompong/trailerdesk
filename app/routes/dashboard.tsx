@@ -1,21 +1,25 @@
 import { env } from "cloudflare:workers";
-import { redirect } from "react-router";
 
 import { getDashboard } from "../../server/features/dashboard/dashboard.service";
-import { authInfo } from "../../server/platform/session";
 import { AttentionList } from "../components/dashboard/attention-list";
 import { StatCard } from "../components/dashboard/stat-card";
 import { StaffShell } from "../components/layout/staff-shell";
+import {
+  staffIdentityContext,
+  staffPageInfoContext,
+} from "../lib/staff-request-context";
 
 import type { Route } from "./+types/dashboard";
 
 export function meta() {
   return [{ title: "Overview | TrailerDesk" }];
 }
-export async function loader({ request }: Route.LoaderArgs) {
-  const info = await authInfo(request, env);
-  if (!info.user) return redirect("/login");
-  return { ...info, dashboard: await getDashboard(request, env) };
+export async function loader({ context }: Route.LoaderArgs) {
+  const info = context.get(staffPageInfoContext);
+  return {
+    ...info,
+    dashboard: await getDashboard(context.get(staffIdentityContext), env),
+  };
 }
 export default function Dashboard({ loaderData }: Route.ComponentProps) {
   const stats = loaderData.dashboard;

@@ -23,9 +23,11 @@ flowchart TD
   Cron --> Services
 ```
 
-`DB` is uncached and used for all writes, sessions and read-after-write.
-`DB_CACHED` is reserved for public inventory and dashboard reads. Hyperdrive cache
-configuration is a cloud-resource setting, not a local simulation guarantee.
+`DB` is uncached and used for all writes, sessions, operational dashboards and
+read-after-write. `DB_CACHED` is reserved for public inventory and other reads whose
+user flow explicitly tolerates staleness. Hyperdrive does not invalidate cached reads
+after writes; cache configuration is a cloud-resource setting, not a local simulation
+guarantee.
 Clients are constructed per request/job and closed by `withDatabase` in
 `server/platform/db.ts`. Never use session-level Postgres features.
 

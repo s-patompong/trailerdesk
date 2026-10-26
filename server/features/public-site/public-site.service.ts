@@ -4,7 +4,8 @@ import { configuration } from "../../platform/config";
 import { withSystem } from "../../platform/context";
 import { emailSender } from "../../platform/email";
 import { DomainError } from "../../platform/errors";
-import { withDealership } from "../../platform/tenant-catalog";
+import { dealershipId } from "../../platform/tenant";
+import { withDealership, withPublicForm } from "../../platform/tenant-catalog";
 import { inventoryForQuote } from "../inventory/inventory.service";
 
 import {
@@ -14,7 +15,14 @@ import {
   publicProfile,
   saveInquiry,
 } from "./public-site.repo";
-import { inquiryInput, inquiryJob, publicFilters } from "./public-site.schemas";
+import {
+  embedInquiryInput,
+  inquiryInput,
+  inquiryJob,
+  publicFilters,
+  publicFormConfiguration,
+  publicFormRecord,
+} from "./public-site.schemas";
 
 export function browseDealership(
   env: Env,
@@ -67,35 +75,7 @@ export async function submitInquiry(
       "rate_limited",
       "Please wait a minute before sending another inquiry.",
     );
-  const verification = await fetch(
-    "https://challenges.cloudflare.com/turnstile/v0/siteverify",
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        secret: config.turnstile.secretKey,
-        response: parsed.turnstileToken,
-      }),
-      signal: AbortSignal.timeout(10000),
-    },
-  );
-  const result = z
-    .object({
-      success: z.boolean(),
-      hostname: z.string().optional(),
-      action: z.string().optional(),
-    })
-    .parse(await verification.json());
-  if (
-    !result.success ||
-    (config.app.environment === "production" &&
-      (result.hostname !== new URL(config.app.url).hostname ||
-        result.action !== "inquiry"))
-  )
-    throw new DomainError(
-      "invalid",
-      "Verification expired. Please verify again and resend.",
-    );
+  await verifyTurnstile(config, parsed.turnstileToken, "inquiry");
   return withDealership(env, slug, false, async (db, id) => {
     if (!(await publicProfile(db, id)))
       throw new DomainError(
@@ -112,6 +92,7 @@ export async function submitInquiry(
         ...parsed,
         kind: "inquiry",
         dealershipId: id,
+        trailerId: parsed.trailerId,
         submittedAt: new Date().toISOString(),
       }),
     );
@@ -121,7 +102,7 @@ export async function submitInquiry(
 export function processInquiry(env: Env, input: unknown) {
   const job = inquiryJob.parse(input);
   return withSystem(env, job.dealershipId, async (context) => {
-    await inventoryForQuote(context, job.trailerId);
+    if (job.trailerId) await inventoryForQuote(context, job.trailerId);
     const { lead, assigned } = await saveInquiry(
       context.db,
       context.dealershipId,
@@ -133,7 +114,7 @@ export function processInquiry(env: Env, input: unknown) {
       dealershipId: job.dealershipId,
       recipient: assigned.email,
       subject: "A shopper asked about a trailer",
-      body: `${job.name} asked about trailer ${job.trailerId}.\n\n${job.message}\n\nOpen the lead: ${config.app.url}/leads/${lead.id}`,
+      body: `${job.name} sent ${job.trailerId ? `an inquiry about trailer ${job.trailerId}` : "a website inquiry"}.\n\n${job.message}\n\nOpen the lead: ${config.app.url}/leads/${lead.id}`,
       idempotencyKey: `inquiry-staff:${job.requestId}`,
     });
     await mail.send({
@@ -144,6 +125,100 @@ export function processInquiry(env: Env, input: unknown) {
       idempotencyKey: `inquiry-customer:${job.requestId}`,
     });
   });
+}
+
+export async function readEmbedForm(env: Env, publicKey: string) {
+  const form = await loadPublicForm(env, publicKey, true);
+  return {
+    config: publicFormConfiguration.parse(form),
+    frameAncestors: ["'self'", ...form.allowedOrigins].join(" "),
+  };
+}
+
+export async function submitEmbedInquiry(
+  request: Request,
+  env: Env,
+  publicKey: string,
+  input: unknown,
+) {
+  const parsed = embedInquiryInput.parse(input);
+  const limit = await env.PUBLIC_RATE_LIMIT.limit({
+    key: `embed:${publicKey}:${request.headers.get("cf-connecting-ip") ?? "local"}`,
+  });
+  if (!limit.success)
+    throw new DomainError(
+      "rate_limited",
+      "Please wait a minute before sending another inquiry.",
+    );
+  const config = configuration(env);
+  await verifyTurnstile(config, parsed.turnstileToken, "embed-inquiry");
+  const form = await loadPublicForm(env, publicKey, false);
+  const id = dealershipId(form.dealershipId);
+  await withSystem(env, id, async (context) => {
+    if (parsed.trailerId) await inventoryForQuote(context, parsed.trailerId);
+  });
+  await env.JOBS.send(
+    inquiryJob.parse({
+      ...parsed,
+      kind: "inquiry",
+      dealershipId: id,
+      trailerId: parsed.trailerId ?? null,
+      submittedAt: new Date().toISOString(),
+    }),
+  );
+  return {
+    accepted: true,
+    message: publicFormConfiguration.parse(form).successMessage,
+  };
+}
+
+async function loadPublicForm(env: Env, publicKey: string, cached: boolean) {
+  const key = z.string().min(12).max(100).parse(publicKey);
+  return withPublicForm(env, key, cached, (row) => {
+    const parsed = publicFormRecord.safeParse(row);
+    if (!parsed.success || !parsed.data.enabled)
+      throw new DomainError(
+        "not_found",
+        "This dealership form is not available.",
+      );
+    return parsed.data;
+  });
+}
+
+async function verifyTurnstile(
+  config: ReturnType<typeof configuration>,
+  token: string,
+  action: "embed-inquiry" | "inquiry",
+): Promise<void> {
+  const response = await fetch(
+    "https://challenges.cloudflare.com/turnstile/v0/siteverify",
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        secret: config.turnstile.secretKey,
+        response: token,
+      }),
+      signal: AbortSignal.timeout(10000),
+    },
+  );
+  const result = z
+    .object({
+      success: z.boolean(),
+      hostname: z.string().optional(),
+      action: z.string().optional(),
+    })
+    .parse(await response.json());
+  if (
+    !result.success ||
+    (config.app.environment === "production" &&
+      (result.hostname !== new URL(config.app.url).hostname ||
+        result.action !== action))
+  )
+    throw new DomainError(
+      "invalid",
+      "Verification expired. Please verify again and resend.",
+    );
 }
 export function readPublicPhoto(env: Env, slug: string, photoId: string) {
   return withDealership(env, slug, true, async (db, id) => {

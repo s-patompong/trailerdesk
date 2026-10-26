@@ -1,4 +1,4 @@
-import { index, route } from "@react-router/dev/routes";
+import { index, layout, route } from "@react-router/dev/routes";
 
 import type { RouteConfig } from "@react-router/dev/routes";
 
@@ -9,6 +9,7 @@ export default [
   route("dev/mail", "routes/dev-mail.tsx"),
   route("d/:slug", "routes/public-inventory.tsx"),
   route("d/:slug/:id", "routes/public-trailer.tsx"),
+  route("embed/forms/:key", "routes/embed-form.tsx"),
   route("documents", "routes/documents.tsx"),
   route("documents/:id", "routes/document-file.ts"),
   route("d/:slug/documents/:id", "routes/public-document.ts"),
@@ -24,7 +25,9 @@ export default [
   route("staff", "routes/staff.tsx"),
   route("failed-jobs", "routes/failed-jobs.tsx"),
   route("ask", "routes/ask.tsx"),
-  route("dashboard", "routes/dashboard.tsx"),
+  layout("routes/staff-request.tsx", [
+    route("dashboard", "routes/dashboard.tsx"),
+  ]),
   route("reset-password", "routes/reset-password.tsx"),
   route("join", "routes/join.tsx"),
   route("accept-invitation", "routes/accept-invitation.tsx"),

@@ -7,15 +7,12 @@ const postgresUrl = z
     (value) => ["postgres:", "postgresql:"].includes(new URL(value).protocol),
     "Use a Postgres connection URL.",
   );
+const localUrl = "postgres://trailerdesk:trailerdesk_local@localhost:5440";
 export const databaseEnv = createEnv({
   server: {
-    DATABASE_URL: postgresUrl.default(
-      "postgres://trailerdesk:trailerdesk_local@localhost:5440/trailerdesk",
-    ),
+    DATABASE_URL: postgresUrl.default(`${localUrl}/trailerdesk`),
     TEST_DATABASE_URL: postgresUrl
-      .default(
-        "postgres://trailerdesk:trailerdesk_local@localhost:5440/trailerdesk_test",
-      )
+      .default(`${localUrl}/trailerdesk_test`)
       .refine((value) => {
         const url = new URL(value);
         return (

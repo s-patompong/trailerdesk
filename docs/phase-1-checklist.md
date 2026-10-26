@@ -1,8 +1,9 @@
 # Phase 1 tracker
 
-Status: local verification passed; stopped before Phase 2. No GitHub repository or
-persistent cloud resources provisioned. Checkboxes cover the local scope. Read the
-[report](phase-1-report.md) for external-account checks and explicit limitations.
+Status: local verification passed and Phase 2 was completed later. The production-readiness
+extension below is locally verified. No persistent cloud resources are provisioned and no
+deployment is claimed. Read the [reports](README.md) for external-account checks and
+explicit limitations.
 
 - [x] Current stable dependencies pinned and upstream changes recorded
 - [x] Guardrails: strict TS, ESLint, format, knip, duplication, architecture, secrets, hooks
@@ -45,3 +46,20 @@ persistent cloud resources provisioned. Checkboxes cover the local scope. Read t
 - Current config/service-selection guidance, feature guides and eight ADRs are present.
 - GitHub CI execution and production integrations remain in their later phases.
 - See [the report](phase-1-report.md) for exact scope, simplifications and environment incident.
+
+## Production-readiness extension evidence
+
+- 2026-10-27: Docker/Node infrastructure is configurable through `.env`; Worker runtime
+  values remain in `.dev.vars`. Both local Hyperdrive bindings use Cloudflare's documented
+  environment override names. Additive migration `0004` and the idempotent seed passed.
+- The versioned `/embed/v1.js` iframe flow derives the dealership from a server-owned public
+  form record, applies an allowlisted `frame-ancestors` policy, validates with shared Zod
+  schemas and Turnstile, rate limits submission, and queues an idempotent tenant-bound lead.
+- Dashboard middleware establishes the verified user, dealership and role once per request.
+  Its operational reads use uncached `DB`; cached Hyperdrive remains limited to public or
+  explicitly stale-tolerant reads.
+- `pnpm check`: 22 Worker/service tests and 1 component test pass with zero warnings,
+  no architecture violations across 250 modules/1,183 dependencies, and 0.96% duplication.
+- `pnpm build`: production client and Worker SSR bundles pass. Focused Playwright proof:
+  embedded client validation/Queue/lead flow plus Owner, Manager and Sales dashboard/settings,
+  4 tests passed. `pnpm secrets:check` reports no leaks.

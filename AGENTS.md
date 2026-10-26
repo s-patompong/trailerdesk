@@ -40,7 +40,8 @@ with a public inventory site. USD integer cents; UTC storage; dealership-local d
 - Zod validates every external boundary, including jobs, workflow params and AI tools.
 - Use typed domain errors and the central HTTP mapper. Plain dealership wording.
 - Create Postgres clients per request/job from Hyperdrive; never module singletons.
-- `DB` for writes and read-after-write. `DB_CACHED` only public pages and dashboards.
+- `DB` for writes, authentication, operational dashboards and read-after-write.
+  `DB_CACHED` is only for public or explicitly stale-tolerant reads.
 - Hyperdrive is transaction pooled: no session state, temporary tables, LISTEN,
   session advisory locks, or session-level SET. Use explicit transactions.
 - Queue delivery and workflow retries are at least once. Persist idempotency keys.

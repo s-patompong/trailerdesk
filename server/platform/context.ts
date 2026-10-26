@@ -18,6 +18,7 @@ export interface StaffContext {
   userId: string;
   role: Role;
 }
+export type StaffIdentity = Omit<StaffContext, "db" | "env">;
 export async function withStaff<T>(
   request: Request,
   env: Env,
@@ -58,6 +59,15 @@ export async function withStaff<T>(
     });
   });
 }
+
+/** Use only with an identity established from the current request by server middleware. */
+export function withStaffIdentity<T>(
+  env: Env,
+  identity: StaffIdentity,
+  run: (context: StaffContext) => Promise<T>,
+): Promise<T> {
+  return withDatabase(env.DB, (db) => run({ ...identity, db, env }));
+}
 export async function handleAuth(
   request: Request,
   env: Env,
@@ -84,15 +94,5 @@ export function withSystem<T>(
       userId: "system",
       role: "owner",
     }),
-  );
-}
-
-export function withCachedStaff<T>(
-  request: Request,
-  env: Env,
-  run: (context: StaffContext) => Promise<T>,
-): Promise<T> {
-  return withStaff(request, env, (context) =>
-    withDatabase(env.DB_CACHED, (db) => run({ ...context, db })),
   );
 }

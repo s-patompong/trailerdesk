@@ -3,10 +3,31 @@ import { Hono } from "hono";
 import {
   browseDealership,
   readPublicPhoto,
+  readEmbedForm,
+  submitEmbedInquiry,
   submitInquiry,
 } from "../features/public-site/public-site.service";
 
 export const publicRoutes = new Hono<{ Bindings: Env }>()
+  .get("/forms/:key/config", async (context) => {
+    context.header(
+      "Cache-Control",
+      "public, max-age=300, s-maxage=300, stale-while-revalidate=3600",
+    );
+    const form = await readEmbedForm(context.env, context.req.param("key"));
+    return context.json(form.config);
+  })
+  .post("/forms/:key/submissions", async (context) =>
+    context.json(
+      await submitEmbedInquiry(
+        context.req.raw,
+        context.env,
+        context.req.param("key"),
+        await context.req.json<unknown>(),
+      ),
+      202,
+    ),
+  )
   .get("/:slug", async (context) => {
     context.header(
       "Cache-Control",

@@ -6,6 +6,7 @@ The first migration enables `vector` before creating embedding columns and index
 - `auth_user`, `auth_session`, `auth_account`, `auth_verification`, `auth_rate_limit`: identity.
 - `organization`, `member`, `invitation`: Better Auth dealership memberships.
 - `dealership`: profile/settings; its primary key is the organization ID.
+- `public_forms`: rotatable public form keys, safe display copy and allowed embed origins.
 - `trailers`, `photos`: lot inventory and R2 references.
 - `customers`, `leads`, `notes`: shopper relationships and sales pipeline.
 - `holds`, `quotes`, `deals`: reservations, priced offers and completed sales.
