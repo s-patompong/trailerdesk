@@ -16,26 +16,43 @@ async function running(): Promise<boolean> {
     return false;
   }
 }
+async function waitUntilRunning(
+  child: ReturnType<typeof spawn>,
+): Promise<void> {
+  const deadline = Date.now() + 45000;
+  while (!(await running())) {
+    if (Date.now() > deadline || child.exitCode !== null)
+      throw new Error(
+        "Start pnpm dev and finish Cloudflare login, then rerun pnpm db:seed. Search seeding requires real Workers AI.",
+      );
+    await setTimeout(500);
+  }
+}
+function alreadyStopped(error: unknown): boolean {
+  return error instanceof Error && "code" in error && error.code === "ESRCH";
+}
+function stop(child: ReturnType<typeof spawn>): void {
+  if (!child.pid) return;
+  if (process.platform === "win32") {
+    child.kill("SIGTERM");
+    return;
+  }
+  try {
+    process.kill(-child.pid, "SIGTERM");
+  } catch (error) {
+    if (!alreadyStopped(error)) throw error;
+  }
+}
 export async function withSeedWorker(run: () => Promise<void>): Promise<void> {
   if (await running()) return run();
   const child = spawn("pnpm", ["dev"], {
-    stdio: "ignore",
+    stdio: "inherit",
     detached: process.platform !== "win32",
   });
   try {
-    const deadline = Date.now() + 45000;
-    while (!(await running())) {
-      if (Date.now() > deadline || child.exitCode !== null)
-        throw new Error(
-          "Start pnpm dev and finish Cloudflare login, then rerun pnpm db:seed. Search seeding requires real Workers AI.",
-        );
-      await setTimeout(500);
-    }
+    await waitUntilRunning(child);
     await run();
   } finally {
-    if (child.pid) {
-      if (process.platform === "win32") child.kill("SIGTERM");
-      else process.kill(-child.pid, "SIGTERM");
-    }
+    stop(child);
   }
 }
