@@ -22,6 +22,14 @@ configurations, KV, R2, queues/DLQ, Turnstile, email, Google OAuth and secrets.
 Enable pgvector before migrations. Never copy local demo accounts into production
 without an explicit reviewed seed decision.
 
+Platform self-signup is disabled. The local seed creates only the documented demo operator.
+Before the first production deployment, add and review a one-time, server-side provisioning
+command for the initial platform operator. It must require an explicit database target,
+hash the password with Better Auth, mark only the intended email as verified, refuse an
+existing account, and leave auditable command evidence. Do not run the demo seed or enable
+the public signup endpoint as a bootstrap shortcut; production deployment is blocked until
+this provisioning path exists and is tested.
+
 Google redirect URIs, with the current auth base path:
 
 - Local: `http://app.localhost:5174/api/auth/callback/google`

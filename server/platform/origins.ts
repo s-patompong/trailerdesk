@@ -50,6 +50,8 @@ export function canonicalOriginResponse(
 ): Response | null {
   const config = configuration(env);
   const requestUrl = new URL(request.url);
+  const privateRoot = privateRootResponse(request, requestUrl, config.app);
+  if (privateRoot) return privateRoot;
   const surface = requestSurface(requestUrl.pathname);
   const acceptedOrigins = [
     config.app.adminUrl,
@@ -84,7 +86,36 @@ export function canonicalOriginResponse(
   const destination = new URL(expectedOrigin);
   destination.pathname = requestUrl.pathname;
   destination.search = requestUrl.search;
-  return Response.redirect(destination, 308);
+  return temporaryRedirect(destination);
+}
+
+function privateRootResponse(
+  request: Request,
+  requestUrl: URL,
+  app: { adminUrl: string; url: string },
+): Response | null {
+  if (
+    requestUrl.pathname !== "/" ||
+    (request.method !== "GET" && request.method !== "HEAD")
+  )
+    return null;
+  const privateOrigins = [app.adminUrl, app.url].map(
+    (url) => new URL(url).origin,
+  );
+  if (!privateOrigins.includes(requestUrl.origin)) return null;
+  const destination = new URL(requestUrl.origin);
+  destination.pathname = "/login";
+  return temporaryRedirect(destination);
+}
+
+function temporaryRedirect(destination: URL): Response {
+  return new Response(null, {
+    status: 307,
+    headers: {
+      "Cache-Control": "no-store",
+      Location: destination.href,
+    },
+  });
 }
 
 function isRealmSharedPage(pathname: string): boolean {

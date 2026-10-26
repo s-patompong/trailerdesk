@@ -30,7 +30,8 @@ test("staff and public hosts keep authentication on the staff surface", async ({
 test("platform and dealership accounts use separate Better Auth realms", async ({
   page,
 }) => {
-  await page.goto("http://admin.localhost:5174/login");
+  await page.goto("http://admin.localhost:5174");
+  await expect(page).toHaveURL("http://admin.localhost:5174/login");
   await page.getByRole("link", { name: "Forgot your password?" }).click();
   await expect(page).toHaveURL("http://admin.localhost:5174/reset-password");
   await page

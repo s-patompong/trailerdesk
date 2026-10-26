@@ -23,6 +23,7 @@ export function createPlatformAuth(env: Env, db: Database) {
     },
     emailAndPassword: {
       enabled: true,
+      disableSignUp: true,
       requireEmailVerification: true,
       sendResetPassword: async ({ user, url, token }) => {
         await mail.send({

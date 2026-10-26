@@ -55,12 +55,39 @@ it("does not accept a platform session in the dealership auth realm", async () =
         );
       expect(sessionCookie).toBeDefined();
 
+      const sessionValue = sessionCookie?.split(";")[0]?.split("=")[1] ?? "";
       const staffSession = await createAuth(env, db).api.getSession({
-        headers: new Headers({ Cookie: sessionCookie?.split(";")[0] ?? "" }),
+        headers: new Headers({
+          Cookie: `better-auth.session_token=${sessionValue}`,
+        }),
       });
       expect(staffSession).toBeNull();
     } finally {
       await db.delete(user).where(eq(user.id, userId));
     }
+  });
+});
+
+it("rejects public signup for the platform realm", async () => {
+  await withDatabase(env.DB, async (db) => {
+    const response = await createPlatformAuth(env, db).handler(
+      new Request("http://admin.localhost:5174/api/admin-auth/sign-up/email", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Origin: "http://admin.localhost:5174",
+        },
+        body: JSON.stringify({
+          name: "Uninvited Platform User",
+          email: `uninvited-${crypto.randomUUID()}@example.test`,
+          password: `${crypto.randomUUID()}${crypto.randomUUID()}`,
+        }),
+      }),
+    );
+
+    expect(response.status).toBe(400);
+    await expect(response.json()).resolves.toMatchObject({
+      code: "EMAIL_PASSWORD_SIGN_UP_DISABLED",
+    });
   });
 });
