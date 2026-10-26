@@ -95,3 +95,31 @@ it("validates configurable feature timing and AI model names", () => {
     }),
   ).toThrow("aging days");
 });
+
+it("requires isolated origin-only application URLs and auth secrets", () => {
+  expect(
+    configuration({ ...env, APP_URL: "http://app.localhost:5174/" }).app.url,
+  ).toBe("http://app.localhost:5174");
+  for (const invalidUrl of [
+    "ftp://admin.localhost:5174",
+    `http://${["user", "pass"].join(":")}@admin.localhost:5174`,
+    "http://admin.localhost:5174/path",
+    "http://admin.localhost:5174?preview=true",
+    "http://admin.localhost:5174#section",
+  ])
+    expect(() => validateEnv({ ...env, ADMIN_APP_URL: invalidUrl })).toThrow(
+      "Use an HTTP(S) origin",
+    );
+  expect(() =>
+    validateEnv({
+      ...env,
+      ADMIN_APP_URL: "http://app.localhost:5175",
+    }),
+  ).toThrow("different hostnames");
+  expect(() =>
+    validateEnv({
+      ...env,
+      ADMIN_AUTH_SECRET: env.BETTER_AUTH_SECRET,
+    }),
+  ).toThrow("authentication secrets must be different");
+});

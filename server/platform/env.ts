@@ -8,11 +8,30 @@ import {
 } from "./config/defaults";
 
 const optionalSecret = z.string().min(1).optional();
+const applicationOrigin = z
+  .url()
+  .superRefine((value, ctx) => {
+    const url = new URL(value);
+    if (
+      !["http:", "https:"].includes(url.protocol) ||
+      url.username !== "" ||
+      url.password !== "" ||
+      url.pathname !== "/" ||
+      url.search !== "" ||
+      url.hash !== ""
+    )
+      ctx.addIssue({
+        code: "custom",
+        message:
+          "Use an HTTP(S) origin without credentials, a path, query, or fragment.",
+      });
+  })
+  .transform((value) => new URL(value).origin);
 const server = {
   APP_ENV: z.enum(["development", "test", "staging", "production"]),
-  APP_URL: z.url(),
-  ADMIN_APP_URL: z.url(),
-  PUBLIC_APP_URL: z.url(),
+  APP_URL: applicationOrigin,
+  ADMIN_APP_URL: applicationOrigin,
+  PUBLIC_APP_URL: applicationOrigin,
   BETTER_AUTH_SECRET: z.string().min(32),
   ADMIN_AUTH_SECRET: z.string().min(32),
   EMAIL_FROM: z.email(),
@@ -172,13 +191,15 @@ function requirements(value: Configuration, ctx: z.RefinementCtx): void {
       value.ADMIN_AUTH_SECRET.startsWith("local-only"))
   )
     fail("Production requires HTTPS, real secrets, and normal timing.");
-  const origins = [
+  const hostnames = [
     value.APP_URL,
     value.ADMIN_APP_URL,
     value.PUBLIC_APP_URL,
-  ].map((url) => new URL(url).origin);
-  if (new Set(origins).size !== origins.length)
-    fail("Admin, staff, and public URLs must use different origins.");
+  ].map((url) => new URL(url).hostname);
+  if (new Set(hostnames).size !== hostnames.length)
+    fail("Admin, staff, and public URLs must use different hostnames.");
+  if (value.BETTER_AUTH_SECRET === value.ADMIN_AUTH_SECRET)
+    fail("Admin and dealership authentication secrets must be different.");
   if (!(
     value.AGING_NOTICE_DAYS < value.AGING_WARNING_DAYS &&
     value.AGING_WARNING_DAYS < value.AGING_CRITICAL_DAYS

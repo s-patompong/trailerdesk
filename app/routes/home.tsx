@@ -23,7 +23,8 @@ export default function Home() {
         Sign in to your dealership
       </Link>
       <p className="mt-16 text-sm text-slate-500">
-        Local setup in progress. Dealership features are being built.
+        Built for utility, cargo, dump, equipment, and specialty trailer
+        dealers.
       </p>
     </main>
   );
