@@ -22,6 +22,20 @@ choice belongs in an ADR with source links. Custom critical code needs a specifi
 reason the available options do not fit, plus an explicit maintenance responsibility.
 Avoid building adapters or extension systems for hypothetical future providers.
 
+## Simplicity gate
+
+Before adding a new layer, configuration source, provider, adapter, factory or generic
+helper, answer three questions:
+
+1. Which current requirement cannot use the existing path?
+2. What is the smallest change that satisfies it now?
+3. Can a future second implementation be added later without costly migration?
+
+If the first answer is unclear, do not add the abstraction. Prefer one obvious workflow
+and one source of truth. When a real second implementation arrives, extract only the
+smallest stable boundary shared by both. DRY removes meaningful maintenance duplication;
+it does not justify hiding simple control flow behind a speculative framework.
+
 For example, a new project needing authentication should evaluate current offerings
 such as Clerk and maintained authentication libraries against its requirements. The
 example is not a standing instruction to choose Clerk. TrailerDesk's accepted stack

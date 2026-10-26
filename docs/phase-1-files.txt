@@ -5,7 +5,6 @@
 .agents/skills/react-router/references/rsc.md
 .betterleaks.toml
 .dependency-cruiser.cjs
-.dev.vars.example
 .env.example
 .editorconfig
 .github/ISSUE_TEMPLATE/bug.yml

@@ -38,9 +38,10 @@ attempt 2, passed for exact commit
   failure artifact.
 
 The first CI executions found two clean-run defects that local state had hidden. Generated
-Wrangler types were narrower before `.dev.vars` existed, and seed cleanup masked an exited
-development server. Commits `6d46389` and `5f66650` fixed those causes rather than weakening
-the checks. The preserved seed output then showed that Wrangler edge preview additionally
+Wrangler types initially depended on uncommitted local configuration, and seed cleanup masked
+an exited development server. Commits `6d46389` and `5f66650` fixed those causes rather than
+weakening the checks. Local configuration was later consolidated into one `.env`; committed
+Wrangler declarations still keep clean-run types stable. The preserved seed output then showed that Wrangler edge preview additionally
 needed `Workers Scripts: Edit`; the token was narrowed to that permission plus Workers AI
 read/edit.
 
