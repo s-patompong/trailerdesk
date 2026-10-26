@@ -19,3 +19,7 @@ export function tenantWhere(
   if (!result) throw new Error("A tenant predicate is required.");
   return result;
 }
+
+export function tenantJoin(left: AnyPgColumn, right: AnyPgColumn): SQL {
+  return eq(left, right);
+}

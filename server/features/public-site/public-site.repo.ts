@@ -173,7 +173,7 @@ export async function saveInquiry(
         trailerId: input.trailerId,
         assignedTo: assigned.id,
         stage: "new",
-        message: `${input.intent === "availability" ? "Is this still available?" : "Request a quote"}\n${input.message}`,
+        message: `${inquiryTitle(input.intent)}\n${input.message}`,
         sourceKey: input.requestId,
       })
       .onConflictDoNothing();
@@ -192,6 +192,12 @@ export async function saveInquiry(
   });
   if (!lead) throw new Error("The inquiry could not be saved.");
   return { lead, assigned };
+}
+
+function inquiryTitle(intent: z.infer<typeof inquiryJob>["intent"]): string {
+  if (intent === "availability") return "Is this still available?";
+  if (intent === "quote") return "Request a quote";
+  return "Website inquiry";
 }
 
 export function publicPhotos(

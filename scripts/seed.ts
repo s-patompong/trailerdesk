@@ -10,6 +10,7 @@ import {
   user,
 } from "../server/platform/schema/auth";
 import { customers, leads } from "../server/platform/schema/crm";
+import { publicForms } from "../server/platform/schema/forms";
 import { dealership, trailers } from "../server/platform/schema/inventory";
 
 import { databaseEnv } from "./database-env";
@@ -56,6 +57,22 @@ async function seedIdentity() {
         address: "8400 Ranch Road, Austin, TX 78736",
         hours: "Mon–Fri 8am–6pm; Sat 9am–3pm",
         publicSite: true,
+      })
+      .onConflictDoNothing();
+    await db
+      .insert(publicForms)
+      .values({
+        id: `${store.id}-website-inquiry`,
+        dealershipId: store.id,
+        publicKey: `${store.id}-contact-form`,
+        name: "Website inquiry",
+        heading: "How can we help?",
+        description:
+          "Ask about inventory, availability, delivery, or your next trailer.",
+        submitLabel: "Send to the dealership",
+        successMessage:
+          "Thanks! The dealership received your inquiry and will be in touch.",
+        allowedOrigins: ["http://127.0.0.1:5174", "http://localhost:5174"],
       })
       .onConflictDoNothing();
   }

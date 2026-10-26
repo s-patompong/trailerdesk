@@ -42,9 +42,11 @@ function loadTurnstile(): Promise<TurnstileApi> {
 export function Turnstile({
   siteKey,
   onToken,
+  action = "inquiry",
 }: {
   siteKey: string;
   onToken: (token: string) => void;
+  action?: "embed-inquiry" | "inquiry";
 }) {
   const container = useRef<HTMLDivElement>(null);
   const [failed, setFailed] = useState(false);
@@ -58,7 +60,7 @@ export function Turnstile({
         if (disposed || !container.current) return;
         widget = value.render(container.current, {
           sitekey: siteKey,
-          action: "inquiry",
+          action,
           callback: onToken,
           "expired-callback": () => {
             onToken("");
@@ -76,7 +78,7 @@ export function Turnstile({
       disposed = true;
       if (widget !== undefined && api) api.remove(widget);
     };
-  }, [onToken, siteKey]);
+  }, [action, onToken, siteKey]);
   return (
     <div className="space-y-2">
       <div ref={container} />

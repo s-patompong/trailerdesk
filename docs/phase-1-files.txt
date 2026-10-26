@@ -6,6 +6,7 @@
 .betterleaks.toml
 .dependency-cruiser.cjs
 .dev.vars.example
+.env.example
 .editorconfig
 .github/ISSUE_TEMPLATE/bug.yml
 .github/ISSUE_TEMPLATE/feature.yml
@@ -58,6 +59,7 @@ app/components/layout/store-switcher.tsx
 app/components/leads/lead-board.tsx
 app/components/leads/lead-controls.tsx
 app/components/public-site/inquiry-form.tsx
+app/components/public-site/embed-inquiry-form.tsx
 app/components/public-site/public-card.tsx
 app/components/public-site/public-filters.tsx
 app/components/public-site/public-header.tsx
@@ -91,6 +93,7 @@ app/components/ui/table.tsx
 app/components/ui/textarea.tsx
 app/lib/auth-client.ts
 app/lib/request-json.ts
+app/lib/staff-request-context.ts
 app/lib/use-hydrated.ts
 app/root.tsx
 app/routes.ts
@@ -125,6 +128,8 @@ app/routes/quote-new.tsx
 app/routes/reset-password.tsx
 app/routes/settings.tsx
 app/routes/staff.tsx
+app/routes/embed-form.tsx
+app/routes/staff-request.tsx
 commitlint.config.mjs
 components.json
 compose.yaml
@@ -132,6 +137,7 @@ docs/README.md
 docs/architecture/ai.md
 docs/architecture/background-work.md
 docs/architecture/data-model.md
+docs/architecture/embedded-forms.md
 docs/architecture/overview.md
 docs/decisions/0001-current-tooling.md
 docs/decisions/0002-single-worker.md
@@ -141,6 +147,7 @@ docs/decisions/0005-pgvector-hybrid-search.md
 docs/decisions/0006-automated-guardrails.md
 docs/decisions/0007-configuration-and-mail.md
 docs/decisions/0008-grounded-ai.md
+docs/decisions/0009-embedded-forms-and-request-context.md
 docs/decisions/template.md
 docs/guides/adding-a-feature.md
 docs/guides/adapting-the-ui.md
@@ -173,6 +180,7 @@ drizzle/0000_glamorous_bloodscream.sql
 drizzle/0001_overconfident_nuke.sql
 drizzle/0002_youthful_dreadnoughts.sql
 drizzle/0003_wonderful_dracula.sql
+drizzle/0004_big_whizzer.sql
 drizzle/meta/0000_snapshot.json
 drizzle/meta/0001_snapshot.json
 drizzle/meta/0002_snapshot.json
@@ -189,6 +197,8 @@ pnpm-lock.yaml
 pnpm-workspace.yaml
 prettier.config.mjs
 public/favicon.ico
+public/embed/v1.js
+public/embed-demo.html
 public/images/demo/car_hauler.jpg
 public/images/demo/dump.jpg
 public/images/demo/enclosed.jpg
@@ -198,7 +208,7 @@ public/images/demo/horse_livestock.jpg
 public/images/demo/utility.jpg
 react-router.config.ts
 scripts/database-env.ts
-scripts/init-test-db.sql
+scripts/init-test-db.sh
 scripts/migrate.ts
 scripts/secrets.ts
 scripts/seed-data/delivery.md
@@ -249,8 +259,10 @@ server/features/leads/leads.repo.ts
 server/features/leads/leads.schemas.ts
 server/features/leads/leads.service.ts
 server/features/public-site/public-site.repo.ts
+server/features/public-site/public-site.schemas.test.ts
 server/features/public-site/public-site.schemas.ts
 server/features/public-site/public-site.service.ts
+server/features/public-site/public-site.test.ts
 server/features/quotes/quotes.repo.ts
 server/features/quotes/quotes.schemas.ts
 server/features/quotes/quotes.service.ts
@@ -299,6 +311,7 @@ server/platform/permissions.ts
 server/platform/schema/auth.ts
 server/platform/schema/crm.ts
 server/platform/schema/email.ts
+server/platform/schema/forms.ts
 server/platform/schema/index.ts
 server/platform/schema/inventory.ts
 server/platform/schema/sales.ts
@@ -315,6 +328,7 @@ tests/e2e/auth-lifecycle.spec.ts
 tests/e2e/crm.spec.ts
 tests/e2e/cron.spec.ts
 tests/e2e/documents.spec.ts
+tests/e2e/embed-form.spec.ts
 tests/e2e/failed-jobs.spec.ts
 tests/e2e/helpers/auth.ts
 tests/e2e/helpers/database.ts

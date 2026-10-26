@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TrailerDesk embedded form example</title>
+    <style>
+      body {
+        margin: 0;
+        background: #f4f1ea;
+        color: #18352f;
+        font-family: system-ui, sans-serif;
+      }
+      main {
+        margin: auto;
+        max-width: 760px;
+        padding: 48px 20px;
+      }
+      h1 {
+        margin-bottom: 8px;
+      }
+      p {
+        line-height: 1.6;
+      }
+      .example {
+        margin-top: 28px;
+        border-radius: 18px;
+        background: white;
+        padding: 12px;
+        box-shadow: 0 18px 50px rgb(24 53 47 / 10%);
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <p>Dealer website example</p>
+      <h1>Talk with Ridgeline Trailer Co.</h1>
+      <p>
+        This page represents a dealership-owned website. The form below is
+        loaded, secured, validated, and processed by TrailerDesk.
+      </p>
+      <div class="example">
+        <script
+          src="/embed/v1.js"
+          data-form-key="ridgeline-contact-form"
+          data-title="Contact Ridgeline Trailer Co."
+          async
+        ></script>
+      </div>
+    </main>
+  </body>
+</html>

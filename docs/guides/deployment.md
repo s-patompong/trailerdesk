@@ -1,8 +1,10 @@
 # Deployment
 
-Not deployed. Phase 1 is local only. Do not run the deploy command or create cloud
-resources before the user's Phase 3 approval. Placeholder resource IDs in
-`wrangler.jsonc` are local configuration, not provisioned resources.
+Not deployed. This repository intentionally stops at a deployment-ready handoff. Do not
+run the deploy command or create cloud resources without a separate, explicit deployment
+request. Placeholder resource IDs in `wrangler.jsonc` are local configuration, not
+provisioned resources. A deploying person or agent must replace and independently verify
+them rather than treating the example as live infrastructure.
 
 Phase 2 is complete: the public repository, incremental conventional commits and green
 quality/browser CI evidence are recorded in the [Phase 2 report](../phase-2-report.md).
@@ -15,7 +17,7 @@ never commit either value. Required PR and `main` checks are secret-free; only a
 manual E2E dispatch uses this token. This is test authentication, not permission to deploy
 or create Cloudflare resources.
 
-Phase 3 requires approval of hosted Postgres (Neon or PlanetScale), two Hyperdrive
+Production requires a hosted Postgres choice (for example Neon or PlanetScale), two Hyperdrive
 configurations, KV, R2, queues/DLQ, Turnstile, email, Google OAuth and secrets.
 Enable pgvector before migrations. Never copy local demo accounts into production
 without an explicit reviewed seed decision.
@@ -36,3 +38,11 @@ Production Zod validation rejects local auth secrets, test Turnstile keys, fast 
 timing, HTTP origins and dev outbox email. Set secrets using `wrangler secret put`.
 Add staging only during Phase 3, deploy production first, and verify both configuration
 readback and live behavior. Update this guide with actual resource IDs and release evidence.
+
+For an initial production footprint of about 14 dealerships and 50+ daily staff users,
+use Workers Paid rather than relying on the Free plan's 10 ms CPU limit. Configure both
+Hyperdrive pools conservatively against the database connection limit, consider Smart
+Placement near the database, and measure request CPU, database latency, query count,
+Queue failures and form rejection rates. Public embed configuration and inventory may
+be cached; authentication, permissions, operational dashboards and read-after-write must
+use the cache-disabled binding.

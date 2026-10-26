@@ -24,7 +24,15 @@ function gitFiles(): string[] {
 }
 async function copySource(destination: string): Promise<void> {
   for (const name of gitFiles()) {
-    if (!(await lstat(name)).isFile()) continue;
+    let source: Awaited<ReturnType<typeof lstat>>;
+    try {
+      source = await lstat(name);
+    } catch (error) {
+      if (error instanceof Error && "code" in error && error.code === "ENOENT")
+        continue;
+      throw error;
+    }
+    if (!source.isFile()) continue;
     const target = join(destination, name);
     await mkdir(dirname(target), { recursive: true });
     await copyFile(name, target);

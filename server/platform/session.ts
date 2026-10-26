@@ -1,28 +1,51 @@
 import { createAuth } from "./auth";
 import { configuration } from "./config";
 import { withDatabase } from "./db";
+import { roleSchema } from "./permissions";
+import { dealershipId } from "./tenant";
+
+import type { StaffIdentity } from "./context";
+import type { Database } from "./db";
 
 export function authInfo(request: Request, env: Env) {
+  return withDatabase(env.DB, (db) => readAuthInfo(request, env, db));
+}
+
+export function staffPageAccess(request: Request, env: Env) {
   return withDatabase(env.DB, async (db) => {
-    const auth = createAuth(env, db);
-    const session = await auth.api.getSession({ headers: request.headers });
-    const organizations = session
-      ? await auth.api.listOrganizations({ headers: request.headers })
-      : [];
-    const config = configuration(env);
-    const membership = session?.session.activeOrganizationId
-      ? await auth.api.getActiveMember({ headers: request.headers })
-      : null;
-    return {
-      user: session?.user ?? null,
-      role: membership?.role ?? null,
-      activeOrganizationId: session?.session.activeOrganizationId ?? null,
-      organizations,
-      googleEnabled: Boolean(
-        config.auth.googleClientId && config.auth.googleClientSecret,
-      ),
-    };
+    const info = await readAuthInfo(request, env, db);
+    const role = roleSchema.safeParse(info.role);
+    const identity: StaffIdentity | null =
+      info.user && info.activeOrganizationId && role.success
+        ? {
+            dealershipId: dealershipId(info.activeOrganizationId),
+            userId: info.user.id,
+            role: role.data,
+          }
+        : null;
+    return { info, identity };
   });
+}
+
+async function readAuthInfo(request: Request, env: Env, db: Database) {
+  const auth = createAuth(env, db);
+  const session = await auth.api.getSession({ headers: request.headers });
+  const organizations = session
+    ? await auth.api.listOrganizations({ headers: request.headers })
+    : [];
+  const config = configuration(env);
+  const membership = session?.session.activeOrganizationId
+    ? await auth.api.getActiveMember({ headers: request.headers })
+    : null;
+  return {
+    user: session?.user ?? null,
+    role: membership?.role ?? null,
+    activeOrganizationId: session?.session.activeOrganizationId ?? null,
+    organizations,
+    googleEnabled: Boolean(
+      config.auth.googleClientId && config.auth.googleClientSecret,
+    ),
+  };
 }
 
 export async function signIn(

@@ -272,6 +272,9 @@ importers:
       '@commitlint/config-conventional':
         specifier: 21.2.4
         version: 21.2.4
+      '@dotenvx/dotenvx':
+        specifier: 1.75.1
+        version: 1.75.1
       '@eslint/compat':
         specifier: 2.1.1
         version: 2.1.1(eslint@10.13.0(jiti@2.7.0)(supports-color@10.2.2))

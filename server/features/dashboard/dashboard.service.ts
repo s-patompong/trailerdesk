@@ -1,5 +1,5 @@
 import { configuration } from "../../platform/config";
-import { withCachedStaff, withSystem } from "../../platform/context";
+import { withStaffIdentity, withSystem } from "../../platform/context";
 import { emailSender } from "../../platform/email";
 import { dealershipIds } from "../../platform/tenant-catalog";
 
@@ -12,8 +12,12 @@ import {
   summaryRecipients,
 } from "./dashboard.repo";
 
-export function getDashboard(request: Request, env: Env) {
-  return withCachedStaff(request, env, (context) => dashboardNumbers(context));
+import type { StaffIdentity } from "../../platform/context";
+
+export function getDashboard(identity: StaffIdentity, env: Env) {
+  return withStaffIdentity(env, identity, (context) =>
+    dashboardNumbers(context),
+  );
 }
 export async function runDailyJobs(env: Env, now: Date): Promise<void> {
   const config = configuration(env).features.jobs;
