@@ -1,0 +1,14 @@
+# Sensitive paths always request the repository owner's review. Branch protection
+# decides whether that requested review is required for a particular change.
+/.github/ @s-patompong
+/AGENTS.md @s-patompong
+/CLAUDE.md @s-patompong
+/REVIEW.md @s-patompong
+/package.json @s-patompong
+/pnpm-lock.yaml @s-patompong
+/wrangler.jsonc @s-patompong
+/drizzle/ @s-patompong
+/server/platform/ @s-patompong
+/server/do/ @s-patompong
+/server/jobs/ @s-patompong
+/server/workflows/ @s-patompong

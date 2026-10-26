@@ -14,18 +14,28 @@ Use typed ESLint flat config, strict TypeScript, Prettier, Knip, jscpd, dependen
 
 Do not weaken thresholds or add broad ignores to obtain green checks. Generated shadcn components are an intentional UI library; migrations/generated types are excluded from duplication checks. Scanner rules and the container digest are reviewed together.
 
-Pull requests run the complete secret-free quality gate. Credentialed Playwright checks
-run on trusted `main` pushes and manual dispatches because the suite exercises remote
-Workers AI. Dependabot and fork PRs do not receive Actions secrets. We do not use
-`pull_request_target` to run PR code with secrets; that would turn a dependency or test
-change into a credential-exfiltration path. This deliberately trades pre-merge remote-AI
-coverage for a safe, reproducible public-repository default.
+Pull requests and `main` pushes run the complete fast, secret-free quality gate.
+Credentialed Playwright checks are manually dispatched because the suite exercises remote
+Workers AI and its browser/bootstrap time is too slow for routine review. Dependabot and
+fork PRs do not receive Actions secrets. We do not use `pull_request_target` to run PR code
+with secrets; that would turn a dependency or test change into a credential-exfiltration
+path. This deliberately trades automatic remote-AI coverage for fast, safe PR feedback.
+The fast gate includes Worker/service tests and jsdom React component tests. jsdom is less
+browser-faithful than Vitest Browser Mode, but it avoids installing Chromium on every PR;
+manual Playwright retains real-browser coverage for changed user flows.
+
+Review follows the repository's `REVIEW.md`: evidence-backed findings, risk-scaled human
+attention, exact-commit approval and no more than three review rounds. After round three,
+the author must rethink, split or escalate instead of letting author/reviewer agents loop.
 
 ## Sources
 
 - https://typescript-eslint.io/users/configs/
 - https://docs.github.com/en/code-security/reference/supply-chain-security/dependabot-on-actions
 - https://docs.github.com/en/actions/reference/security/secure-use
+- https://vitest.dev/guide/browser/component-testing
+- https://testing-library.com/docs/react-testing-library/intro/
+- https://claude.dev/blog/solving-code-review-at-anthropic/
 - Relevant implementation and tests are indexed in the product feature guides.
 
 ## Secret scanner update

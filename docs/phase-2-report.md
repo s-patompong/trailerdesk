@@ -5,7 +5,7 @@ Status: complete. TrailerDesk is in the public
 the `main` branch. Phase 3 has not started; no application or persistent Cloudflare
 resource was deployed.
 
-## Git history
+## Initial publication history
 
 The repository was published as reviewable conventional commits:
 
@@ -17,6 +17,7 @@ The repository was published as reviewable conventional commits:
 6. `6d46389` `fix: decouple email config from generated env literals`
 7. `5f66650` `fix: preserve seed worker startup failures`
 8. `3c081bc` `ci: separate trusted browser verification`
+9. `8052b7f` `docs: record Phase 2 verification`
 
 GitHub reports the repository as public with `main` as its default branch. The local
 checkout tracks `origin/main` and was clean at the recorded application commit.
@@ -45,22 +46,29 @@ read/edit.
 
 ## Pull-request security
 
-Pull requests, including Dependabot and forks, run the complete secret-free `check` job.
-The credentialed `browser` job runs only on trusted `main` pushes or manual dispatches.
-GitHub does not provide Actions secrets to Dependabot or fork pull requests, and the
-workflow does not use `pull_request_target` to execute untrusted code with secrets.
+Pull requests, including Dependabot and forks, run the complete fast, secret-free `check`
+job. The credentialed browser suite is a separate manual workflow. GitHub does not provide
+Actions secrets to Dependabot or fork pull requests, and neither workflow uses
+`pull_request_target` to execute untrusted code with secrets.
 
-This is an intentional security boundary, not equivalent pre-merge coverage. Reviewers
-must rely on the secret-free PR gate and require the trusted browser job after merge or by
-manual dispatch before treating remote-AI behavior as verified.
+This is an intentional speed and security boundary, not equivalent automatic browser
+coverage. Reviewers rely on the fast PR gate and run relevant Playwright files locally or
+manually dispatch the full trusted suite when a changed flow warrants it.
+
+The fast gate runs 18 Worker/service tests and a React component test for accessible,
+plain-language frontend validation. `REVIEW.md`, the pull-request template and CODEOWNERS
+define evidence-backed findings, risk-scaled human attention, exact-commit approval and a
+maximum of three review rounds. A solo maintainer cannot honestly supply the documented
+two-person high-risk review, so the policy requires recording that limitation, explicit
+owner sign-off, stronger focused verification and a concrete rollback instead.
 
 ## Simplifications and remaining work
 
 - GitHub Actions uses the repository secret directly; protected deployment environments
   and environment approvals remain Phase 3 work.
 - Browser installation follows Playwright's official `install --with-deps chromium`
-  command. GitHub-hosted download time varied from 21 seconds to about 11 minutes; it did
-  not affect the test result.
+  command. GitHub-hosted download time varied from 21 seconds to about 11 minutes. That
+  variability is why the full suite is manual rather than a required CI gate.
 - The open Dependabot update is not merged automatically. Its code still requires review.
 - There is no deploy workflow yet. Phase 3 calls for a manual production deployment first,
   live verification, and only then a manually triggered CI deploy job.

@@ -82,6 +82,19 @@ with a public inventory site. USD integer cents; UTC storage; dealership-local d
 - Before edits, inspect implementation, summarize current behavior and give a focused plan.
   Ask before broad architectural changes outside the authorized design.
 
+## Pull requests and review
+
+- `check` is the required fast CI gate for every PR: secrets, migrations, `pnpm check`
+  and build. Full Playwright E2E is local or manually dispatched when the changed flow
+  warrants it; it is not an automatic PR gate.
+- Follow `REVIEW.md` and the PR template. State scope, risk, exact verification and a
+  rollback path. Findings need file/line evidence and every thread needs a resolution.
+- Review has at most three rounds. Round one covers the whole diff; rounds two and three
+  cover the new diff and prior findings. After round three, stop and rethink, split or
+  escalate instead of looping.
+- Human approval is bound to an exact commit. Later code/configuration changes require
+  fresh approval. A bot never replaces a required person.
+
 ## Design intent
 
 - TrailerDesk is a reference for project structure, boundaries, validation, security,
@@ -97,9 +110,10 @@ with a public inventory site. USD integer cents; UTC storage; dealership-local d
 
 ## Definition of done
 
-`pnpm check` passes with zero warnings, relevant tests pass, build and e2e pass,
-user-visible behavior is verified, docs reflect actual behavior, and limitations
-are explicitly listed. Never label scaffolding or mocked integration checks as complete features.
+`pnpm check` passes with zero warnings, relevant tests and build pass, changed user flows
+receive appropriate local or manually dispatched E2E verification, docs reflect actual
+behavior, and limitations are explicitly listed. Never label scaffolding or mocked
+integration checks as complete features.
 
 ## Documentation
 
