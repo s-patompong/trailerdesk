@@ -46,3 +46,26 @@ Placement near the database, and measure request CPU, database latency, query co
 Queue failures and form rejection rates. Public embed configuration and inventory may
 be cached; authentication, permissions, operational dashboards and read-after-write must
 use the cache-disabled binding.
+
+The Worker does not reserve 128 MB per signed-in person or run continuously. Cloudflare's
+128 MB limit is per isolate; an isolate may handle concurrent requests and is created or
+retired by the platform. Browser requests, Queue batches, Cron events and Workflow steps
+are separate invocations of the same deployed script. Keep durable state outside memory
+and watch `Exceeded Memory` outcomes rather than estimating memory from user count.
+
+Deployment has a one-time provisioning stage and a repeatable release stage:
+
+1. Provision hosted Postgres, two Hyperdrive configurations, KV, R2, Queue/DLQ, Turnstile
+   and production secrets; replace the placeholder IDs in `wrangler.jsonc`.
+2. Run migrations against the reviewed production database URL.
+3. Run `pnpm check`, `pnpm build`, then `pnpm deploy` from the reviewed commit.
+4. Verify health, authentication, one Queue/email flow, Cron, Workflow progress and logs.
+
+After provisioning, normal releases use the existing `pnpm deploy` command. Resource
+creation remains separate because it is infrequent, account-specific and destructive when
+pointed at the wrong account. Do not hide it in an automatic setup script.
+
+Current platform references: [Workers limits](https://developers.cloudflare.com/workers/platform/limits/),
+[Queues](https://developers.cloudflare.com/queues/get-started/),
+[Cron Triggers](https://developers.cloudflare.com/workers/configuration/cron-triggers/) and
+[Workflows](https://developers.cloudflare.com/workflows/).

@@ -20,6 +20,7 @@
     "test:server": "vitest run --config vitest.config.ts",
     "test:components": "vitest run --config vitest.components.config.ts",
     "test:e2e": "playwright test",
+    "test:e2e:background": "playwright test tests/e2e/public-inquiry.spec.ts tests/e2e/cron.spec.ts",
     "check": "pnpm typecheck && pnpm lint && pnpm format:check && pnpm knip && pnpm jscpd && pnpm depcruise && pnpm test",
     "db:up": "docker compose up -d --wait",
     "db:generate": "dotenvx run --ignore=MISSING_ENV_FILE -- drizzle-kit generate",
