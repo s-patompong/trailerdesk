@@ -1,11 +1,13 @@
 # TrailerDesk documentation
 
-Start with the [Phase 1 tracker](phase-1-checklist.md) and [local verification report](phase-1-report.md), which distinguish implemented behavior, evidence and limitations.
+Start with the [Phase 1 tracker](phase-1-checklist.md), [local verification report](phase-1-report.md)
+and [GitHub/CI report](phase-2-report.md), which distinguish implemented behavior,
+evidence and limitations.
 
 - Product: [overview](product/overview.md), [glossary](product/glossary.md), [roles](product/roles-and-permissions.md)
 - Architecture: [overview](architecture/overview.md), [data model](architecture/data-model.md), [background work](architecture/background-work.md), [AI](architecture/ai.md)
 - Decisions: [current tooling](decisions/0001-current-tooling.md), [ADR template](decisions/template.md)
-- Guides: [configuration](guides/configuration.md), [local development](guides/local-development.md), [testing](guides/testing.md), [deployment](guides/deployment.md), [adding a feature](guides/adding-a-feature.md), [adapting the UI](guides/adapting-the-ui.md), [choosing maintained services](guides/choosing-services.md), [troubleshooting](guides/troubleshooting.md)
+- Guides: [configuration](guides/configuration.md), [local development](guides/local-development.md), [testing](guides/testing.md), [code review](guides/code-review.md), [deployment](guides/deployment.md), [adding a feature](guides/adding-a-feature.md), [adapting the UI](guides/adapting-the-ui.md), [choosing maintained services](guides/choosing-services.md), [troubleshooting](guides/troubleshooting.md)
 
 Feature guides describe business flows, rules and code locations:
 

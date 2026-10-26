@@ -1,7 +1,9 @@
 # TrailerDesk
 
 Trailer dealership software built with React Router, Hono and Cloudflare Workers.
-**Local verification passes.** See the [Phase 1 report](docs/phase-1-report.md) for verified features and limitations. GitHub and deployment are later phases.
+**Local and GitHub CI verification pass.** See the [Phase 1](docs/phase-1-report.md)
+and [Phase 2](docs/phase-2-report.md) reports for evidence and limitations. Cloudflare
+deployment remains a separate, approval-gated phase.
 
 This repository demonstrates application structure, security, validation, testing and
 operations. Its visual design is only a polished example; derived projects should follow

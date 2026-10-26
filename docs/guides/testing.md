@@ -22,6 +22,24 @@ Browser tests must isolate their own test records and clean up only IDs they cre
 Never use a production URL or database. Remote AI calls are integration checks,
 not mocked unit evidence; record actual model responses and failures separately.
 
+GitHub pull requests and `main` pushes run only the fast, secret-free `check` workflow:
+install, secret scans, migrations, `pnpm check` and the production build. Full Playwright
+is intentionally not a required CI gate because its remote-AI seed and browser setup make
+feedback too slow for routine review. Run it locally for changed user flows or dispatch
+the separate `Manual TrailerDesk E2E` workflow when shared evidence is valuable.
+
+`pnpm test` runs two fast layers: Worker/service tests against the isolated test Postgres
+and React component tests in jsdom. Component tests use React Testing Library and query
+the page through labels, roles and visible dealership wording. They are for validation,
+state and accessibility behavior; they do not replace Playwright's real-browser coverage.
+
+The manual workflow is trusted and credentialed. GitHub withholds Actions secrets from
+Dependabot and fork pull requests, and privileged workflows must not execute untrusted PR
+code with secrets. Do not work around that boundary with `pull_request_target`. Review the
+commit first, then manually dispatch its ref for the real Workers AI browser suite. See
+GitHub's [Dependabot restrictions](https://docs.github.com/en/code-security/reference/supply-chain-security/dependabot-on-actions)
+and [secure-use guidance](https://docs.github.com/en/actions/reference/security/secure-use).
+
 Browser coverage also exercises real Workers AI citations/listing drafts, vPIC prefill,
 Mailpit messages, hold conflicts/alarms, PDFs, closing follow-ups, invitations and reset
 links, PDF indexing/privacy, cron summaries, lead drag/drop and dealership switching.
@@ -39,13 +57,14 @@ objects are retained for inspection. No shared database reset is part of the sui
 
 Use the narrowest test that proves the behavior:
 
-| Behavior                                                 | Test level                                                  | Example in this repository                    |
-| -------------------------------------------------------- | ----------------------------------------------------------- | --------------------------------------------- |
-| Money, schemas or permission rules                       | Vitest, no database                                         | `server/platform/money.test.ts`               |
-| Repository tenancy or projections                        | Vitest in workerd with the test Postgres                    | `server/features/inventory/inventory.test.ts` |
-| API, bindings or provider adapters                       | Vitest in workerd; mock only the external HTTP boundary     | `server/platform/email.test.ts`               |
-| Form validation, role-visible UI or a complete user flow | Playwright against the local Worker                         | `tests/e2e/inventory-form.spec.ts`            |
-| Queue, alarm, Workflow or cron behavior                  | Playwright with bounded polling against real local bindings | `tests/e2e/public-inquiry.spec.ts`            |
+| Behavior                                    | Test level                                                  | Example in this repository                        |
+| ------------------------------------------- | ----------------------------------------------------------- | ------------------------------------------------- |
+| Money, schemas or permission rules          | Vitest, no database                                         | `server/platform/money.test.ts`                   |
+| Repository tenancy or projections           | Vitest in workerd with the test Postgres                    | `server/features/inventory/inventory.test.ts`     |
+| API, bindings or provider adapters          | Vitest in workerd; mock only the external HTTP boundary     | `server/platform/email.test.ts`                   |
+| Isolated form validation or component state | React Testing Library in jsdom                              | `app/components/customers/customer-form.test.tsx` |
+| Role-visible UI or a complete user flow     | Playwright against the local Worker                         | `tests/e2e/inventory-form.spec.ts`                |
+| Queue, alarm, Workflow or cron behavior     | Playwright with bounded polling against real local bindings | `tests/e2e/public-inquiry.spec.ts`                |
 
 Do not repeat an end-to-end scenario for every input permutation. Prove the rule
 quickly at the domain or schema boundary, then keep one browser test for the user-visible
@@ -172,12 +191,13 @@ See `tests/e2e/public-inquiry.spec.ts` for Queue plus Mailpit and
 ## Running one example
 
 ```bash
-pnpm test server/platform/money.test.ts
-pnpm test server/features/inventory/inventory.test.ts
+pnpm test:server server/platform/money.test.ts
+pnpm test:server server/features/inventory/inventory.test.ts
+pnpm test:components app/components/customers/customer-form.test.tsx
 pnpm test:e2e tests/e2e/status-permissions.spec.ts
 pnpm test:e2e tests/e2e/public-inquiry.spec.ts
 ```
 
-Run `pnpm check`, `pnpm build` and the relevant browser suite before calling a change
-done. A passing lower-level test does not replace browser verification for a changed
-user flow.
+Run `pnpm check`, `pnpm build` and, for a changed user flow, the relevant local or manual
+browser suite before calling the change done. A passing lower-level test does not replace
+browser verification when browser behavior changed.
