@@ -1,6 +1,8 @@
 # TrailerDesk documentation
 
-Start with the [Phase 1 tracker](phase-1-checklist.md) and [local verification report](phase-1-report.md), which distinguish implemented behavior, evidence and limitations.
+Start with the [Phase 1 tracker](phase-1-checklist.md), [local verification report](phase-1-report.md)
+and [GitHub/CI report](phase-2-report.md), which distinguish implemented behavior,
+evidence and limitations.
 
 - Product: [overview](product/overview.md), [glossary](product/glossary.md), [roles](product/roles-and-permissions.md)
 - Architecture: [overview](architecture/overview.md), [data model](architecture/data-model.md), [background work](architecture/background-work.md), [AI](architecture/ai.md)

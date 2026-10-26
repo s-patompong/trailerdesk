@@ -4,8 +4,8 @@ Not deployed. Phase 1 is local only. Do not run the deploy command or create clo
 resources before the user's Phase 3 approval. Placeholder resource IDs in
 `wrangler.jsonc` are local configuration, not provisioned resources.
 
-Phase 2 requires the user's GitHub repository name and visibility, incremental
-conventional commits, push and a verified green CI run.
+Phase 2 is complete: the public repository, incremental conventional commits and green
+quality/browser CI evidence are recorded in the [Phase 2 report](../phase-2-report.md).
 
 The Phase 2 browser job starts the local Worker with its Workers AI binding in remote
 mode. Its account-scoped `CLOUDFLARE_API_TOKEN` therefore needs `Workers Scripts: Edit`
