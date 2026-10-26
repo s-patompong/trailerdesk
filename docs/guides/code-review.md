@@ -56,6 +56,19 @@ and retain a clear rollback path. Do not invent a second approval.
 Approval covers an exact commit. Dismiss it after later code or configuration commits.
 Sensitive paths in `.github/CODEOWNERS` always request the owner's attention.
 
+## GitHub enforcement
+
+The `main` branch requires a pull request, an up-to-date `check` result, resolved review
+conversations and linear history. The rule applies to administrators and blocks force
+pushes and branch deletion. GitHub currently requires zero approvals because this is a
+solo-owned repository; otherwise the owner could not merge their own work. CODEOWNERS
+requests attention but is not a mandatory approval gate.
+
+The medium/high-risk human rules above are therefore process policy, not fully enforceable
+repository settings today. When another maintainer with write access joins, require the
+appropriate approval count and code-owner review in GitHub, then keep stale-approval
+dismissal enabled so approval continues to cover the exact reviewed commit.
+
 ## Why this policy
 
 Anthropic's article [How the Claude Code team does code review](https://claude.dev/blog/solving-code-review-at-anthropic/)

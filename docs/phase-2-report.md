@@ -62,6 +62,12 @@ maximum of three review rounds. A solo maintainer cannot honestly supply the doc
 two-person high-risk review, so the policy requires recording that limitation, explicit
 owner sign-off, stronger focused verification and a concrete rollback instead.
 
+GitHub branch protection enforces pull requests, the up-to-date `check` status, resolved
+review conversations and linear history on `main`, including for administrators. Force
+pushes and branch deletion are disabled. Required approvals are set to zero to avoid a
+solo-owner deadlock; CODEOWNERS requests review, while risk-scaled human approvals remain
+documented policy until another maintainer with write access is available.
+
 ## Simplifications and remaining work
 
 - GitHub Actions uses the repository secret directly; protected deployment environments
