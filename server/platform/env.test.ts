@@ -97,6 +97,7 @@ it("validates configurable feature timing and AI model names", () => {
 });
 
 it("requires isolated origin-only application URLs and auth secrets", () => {
+  const validated = validateEnv(env);
   expect(
     configuration({ ...env, APP_URL: "http://app.localhost:5174/" }).app.url,
   ).toBe("http://app.localhost:5174");
@@ -119,7 +120,7 @@ it("requires isolated origin-only application URLs and auth secrets", () => {
   expect(() =>
     validateEnv({
       ...env,
-      ADMIN_AUTH_SECRET: env.BETTER_AUTH_SECRET,
+      ADMIN_AUTH_SECRET: validated.BETTER_AUTH_SECRET,
     }),
   ).toThrow("authentication secrets must be different");
 });
