@@ -49,9 +49,9 @@ explicit limitations.
 
 ## Production-readiness extension evidence
 
-- 2026-10-27: Docker/Node infrastructure is configurable through `.env`; Worker runtime
-  values remain in `.dev.vars`. Both local Hyperdrive bindings use Cloudflare's documented
-  environment override names. Additive migration `0004` and the idempotent seed passed.
+- 2026-10-27: Docker, Node tools and the local Worker share `.env` as one local source of
+  truth. Both Hyperdrive bindings use Cloudflare's documented environment override names.
+  Additive migration `0004` and the idempotent seed passed.
 - The versioned `/embed/v1.js` iframe flow derives the dealership from a server-owned public
   form record, applies an allowlisted `frame-ancestors` policy, validates with shared Zod
   schemas and Turnstile, rate limits submission, and queues an idempotent tenant-bound lead.

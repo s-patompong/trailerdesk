@@ -24,6 +24,10 @@ are required only for the chosen driver. Do not serialize server configuration.
 Feature timings, thresholds and AI model names use the same validated configuration.
 Dealership tax/fees/timezone stay in database settings. Cloudflare binding selection
 stays in Wrangler. Embedding dimensions require migration/reindex coordination.
+Local Docker, Node tools and the Worker share one ignored `.env`; `.env.example` is the
+only committed template. Production values remain Cloudflare-managed variables and
+secrets. A separate local Worker vars file was removed because it duplicated one source
+without serving a current requirement.
 
 ## Evidence and tradeoffs
 

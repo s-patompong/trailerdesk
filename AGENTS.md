@@ -54,7 +54,8 @@ with a public inventory site. USD integer cents; UTC storage; dealership-local d
   defaults to Mailpit, staging to Mailtrap Sandbox, and production to Resend. Explicit
   drivers override defaults; local Mailtrap is supported. Use grouped typed config in
   `server/platform/config/`; never return the whole config to the browser.
-- No committed secrets. `.dev.vars` is local; copy `.dev.vars.example`.
+- No committed secrets. Local tools and the Worker share `.env`; copy `.env.example`.
+  Production values and secrets live in Cloudflare, never in the repository.
 
 ## Choosing services and libraries
 
@@ -75,6 +76,13 @@ with a public inventory site. USD integer cents; UTC storage; dealership-local d
 
 - Strict TypeScript. No `any`; avoid assertions and non-null assertions.
 - Small focused files/functions; YAGNI, KISS, pragmatic DRY. No unrelated rewrites.
+- Pass a simplicity gate before adding structure: identify the current requirement,
+  show why the existing path cannot meet it, and choose the fewest concepts and sources
+  of truth that solve it. Do not add a provider, adapter, configuration layer, generic
+  helper or extension point for a hypothetical future need.
+- Prefer one obvious workflow. Add a second implementation only for a current use case;
+  then extract the smallest shared boundary that removes meaningful duplication without
+  hiding control flow. Delete obsolete paths and documentation in the same change.
 - Prices and totals are integer cents. Tax uses integer basis points and explicit rounding.
 - Do not weaken quality checks or skip tests to obtain a green result.
 - Tests cover security, money, state transitions and retry behavior.

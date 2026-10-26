@@ -17,7 +17,6 @@ Use Node from `.nvmrc`, Docker and pnpm (Corepack reads the pinned package manag
 ```sh
 pnpm install
 cp .env.example .env
-cp .dev.vars.example .dev.vars
 pnpm db:up
 pnpm db:migrate
 pnpm exec wrangler login

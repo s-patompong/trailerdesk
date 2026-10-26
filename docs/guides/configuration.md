@@ -9,15 +9,14 @@ an API response or loader; return only the public values the page needs.
 
 | Layer                                       | Local source              | Cloud source                  |
 | ------------------------------------------- | ------------------------- | ----------------------------- |
-| Docker and Node tools                       | `.env`                    | CI or operator environment    |
-| Worker values and secrets                   | `.dev.vars`               | Wrangler vars and secrets     |
+| Tools, Worker values and local secrets      | `.env`                    | Wrangler vars and secrets     |
 | KV, R2, Queue, AI, Hyperdrive, DO, Workflow | `wrangler.jsonc` bindings | Provisioned binding IDs/names |
 | Dealership behavior                         | Postgres settings         | Postgres settings             |
 
-Copy both committed example files. `.env` owns database/tool connectivity; `.dev.vars`
-owns values visible to Worker code. This intentional split follows Cloudflare's rule to
-avoid loading both `.env` and `.dev.vars` as competing Worker-secret files while still
-letting Docker and Node tools share one local infrastructure configuration.
+Copy `.env.example` to `.env`. Docker Compose, Node tools and the local Worker share that
+single local configuration file. Cloudflare supports either `.env` or `.dev.vars`; this
+project deliberately uses only `.env` to keep one local source of truth. The file is never
+committed or uploaded as production configuration.
 
 ## Mail
 
@@ -28,7 +27,7 @@ letting Docker and Node tools share one local infrastructure configuration.
 | staging     | Mailtrap Sandbox                     |
 | production  | Resend                               |
 
-An explicit `EMAIL_DRIVER` takes priority. To use Mailtrap locally, edit `.dev.vars`:
+An explicit `EMAIL_DRIVER` takes priority. To use Mailtrap locally, edit `.env`:
 
 ```dotenv
 EMAIL_DRIVER=mailtrap
@@ -82,6 +81,6 @@ configuration in `wrangler.jsonc`.
 Add its Zod schema and safe default in `server/platform/env.ts` and `config/defaults.ts`,
 then expose a named value in the relevant typed config group. Use that value in the
 service and in any user-facing explanation of the behavior. Add invalid-value and
-override tests, update the relevant `.env.example` or `.dev.vars.example`, and document migration/reindex requirements
+override tests, update `.env.example`, and document migration/reindex requirements
 when a setting affects stored data. Do not scatter raw env reads or fallback values
 through features, and do not add configurable providers that the project does not use.
