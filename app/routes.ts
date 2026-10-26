@@ -1,0 +1,37 @@
+import { index, route } from "@react-router/dev/routes";
+
+import type { RouteConfig } from "@react-router/dev/routes";
+
+export default [
+  index("routes/home.tsx"),
+  route("d/:slug/bills/:token", "routes/public-bill.ts"),
+  route("d/:slug/quotes/:token", "routes/public-quote.ts"),
+  route("dev/mail", "routes/dev-mail.tsx"),
+  route("d/:slug", "routes/public-inventory.tsx"),
+  route("d/:slug/:id", "routes/public-trailer.tsx"),
+  route("documents", "routes/documents.tsx"),
+  route("documents/:id", "routes/document-file.ts"),
+  route("d/:slug/documents/:id", "routes/public-document.ts"),
+  route("leads", "routes/leads.tsx"),
+  route("leads/:id", "routes/lead-detail.tsx"),
+  route("customers", "routes/customers.tsx"),
+  route("customers/:id", "routes/customer-detail.tsx"),
+  route("deals", "routes/deals.tsx"),
+  route("deals/:id", "routes/deal-detail.tsx"),
+  route("quotes/new", "routes/quote-new.tsx"),
+  route("quotes/:id", "routes/quote-detail.tsx"),
+  route("settings", "routes/settings.tsx"),
+  route("staff", "routes/staff.tsx"),
+  route("failed-jobs", "routes/failed-jobs.tsx"),
+  route("ask", "routes/ask.tsx"),
+  route("dashboard", "routes/dashboard.tsx"),
+  route("reset-password", "routes/reset-password.tsx"),
+  route("join", "routes/join.tsx"),
+  route("accept-invitation", "routes/accept-invitation.tsx"),
+  route("auth/complete", "routes/auth-complete.ts"),
+  route("login", "routes/login.tsx"),
+  route("inventory", "routes/inventory.tsx"),
+  route("inventory/new", "routes/inventory-new.tsx"),
+  route("inventory/:id/edit", "routes/inventory-edit.tsx"),
+  route("inventory/:id", "routes/inventory-detail.tsx"),
+] satisfies RouteConfig;
