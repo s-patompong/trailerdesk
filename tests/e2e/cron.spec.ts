@@ -43,7 +43,7 @@ test("nightly flags and morning manager summaries run through the local schedule
   browser,
 }) => {
   const context = await browser.newContext({
-    baseURL: "http://localhost:5174",
+    baseURL: "http://app.localhost:5174",
   });
   let trailerId: string | undefined;
   let leadId: string | undefined;

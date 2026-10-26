@@ -18,10 +18,7 @@ export function createAuth(
   const mail = emailSender(env, db);
   return betterAuth({
     baseURL: config.app.url,
-    trustedOrigins:
-      config.app.environment === "development"
-        ? [config.app.url, "http://127.0.0.1:5174"]
-        : [config.app.url],
+    trustedOrigins: [config.app.url],
     secret: config.auth.secret,
     database: drizzleAdapter(db, { provider: "pg", schema }),
     emailAndPassword: {

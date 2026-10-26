@@ -18,7 +18,7 @@ async function mailLink(prefix: string, email: string): Promise<string> {
       text = message?.Text ?? "";
       return text;
     })
-    .toContain("http://localhost:5174/");
+    .toContain("http://app.localhost:5174/");
   const link = /https?:\/\/\S+/.exec(text)?.[0];
   if (!link) throw new Error("The captured email did not contain a link.");
   return link;
@@ -78,7 +78,7 @@ async function resetInvitedPassword(page: Page, email: string) {
   await expect(page.getByText(/Your password has been updated/)).toBeVisible();
   await waitForSignInCapacity();
   const response = await page.request.post("/api/auth/sign-in/email", {
-    headers: { Origin: "http://localhost:5174" },
+    headers: { Origin: "http://app.localhost:5174" },
     data: { email, password: replacementPassword },
   });
   expect(response.status(), await response.text()).toBe(200);
@@ -89,9 +89,11 @@ test("staff invitation, verified signup and password reset use actual captured e
 }) => {
   test.setTimeout(120000);
   const email = `invited-${crypto.randomUUID()}@example.test`;
-  const owner = await browser.newContext({ baseURL: "http://localhost:5174" });
+  const owner = await browser.newContext({
+    baseURL: "http://app.localhost:5174",
+  });
   const invited = await browser.newContext({
-    baseURL: "http://localhost:5174",
+    baseURL: "http://app.localhost:5174",
   });
   try {
     await signInApi(owner, "owner");

@@ -3,6 +3,11 @@ import { Truck } from "lucide-react";
 import { data, Link, redirect } from "react-router";
 
 import { signInSchema } from "../../server/features/auth/auth.schemas";
+import { isAdminOrigin } from "../../server/platform/origins";
+import {
+  platformAuthInfo,
+  platformSignIn,
+} from "../../server/platform/platform-session";
 import { authInfo, signIn } from "../../server/platform/session";
 import { SignInForm } from "../components/auth/sign-in-form";
 import { Button } from "../components/ui/button";
@@ -22,9 +27,14 @@ export function meta() {
   return [{ title: "Sign in | TrailerDesk" }];
 }
 export async function loader({ request }: Route.LoaderArgs) {
+  if (isAdminOrigin(request, env)) {
+    const info = await platformAuthInfo(request, env);
+    if (info.user) return redirect("/admin");
+    return { audience: "platform" as const, googleEnabled: false };
+  }
   const info = await authInfo(request, env);
   if (info.user && info.activeOrganizationId) return redirect("/inventory");
-  return { googleEnabled: info.googleEnabled };
+  return { audience: "dealership" as const, googleEnabled: info.googleEnabled };
 }
 export async function action({ request }: Route.ActionArgs) {
   const parsed = signInSchema.safeParse(
@@ -35,7 +45,9 @@ export async function action({ request }: Route.ActionArgs) {
       { error: "Enter a valid email and a password with 8 to 128 characters." },
       { status: 400 },
     );
-  const response = await signIn(request, env, parsed.data);
+  const response = isAdminOrigin(request, env)
+    ? await platformSignIn(request, env, parsed.data)
+    : await signIn(request, env, parsed.data);
   if (response.ok || response.status === 302) return response;
   return data(
     {
@@ -69,11 +81,15 @@ export default function Login({
       <Card className="shadow-sm">
         <CardHeader>
           <CardTitle className="text-2xl">Welcome back</CardTitle>
-          <CardDescription>Sign in to your dealership.</CardDescription>
+          <CardDescription>
+            {loaderData.audience === "platform"
+              ? "Sign in to TrailerDesk administration."
+              : "Sign in to your dealership."}
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-5">
           <SignInForm serverError={actionData?.error} />
-          {loaderData.googleEnabled && (
+          {loaderData.audience === "dealership" && loaderData.googleEnabled && (
             <>
               <Separator />
               <Button
@@ -96,7 +112,9 @@ export default function Login({
         </CardContent>
       </Card>
       <p className="text-center text-xs text-muted-foreground">
-        A clearer day at the dealership.
+        {loaderData.audience === "platform"
+          ? "Platform access is separate from dealership accounts."
+          : "A clearer day at the dealership."}
       </p>
     </main>
   );

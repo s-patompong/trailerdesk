@@ -2,6 +2,7 @@ import { env } from "cloudflare:workers";
 import { Link, redirect } from "react-router";
 
 import { getSettings } from "../../server/features/settings/settings.service";
+import { configuration } from "../../server/platform/config";
 import { throwHttpError } from "../../server/platform/errors";
 import { authInfo } from "../../server/platform/session";
 import { StaffShell } from "../components/layout/staff-shell";
@@ -21,7 +22,11 @@ export async function loader({ request }: Route.LoaderArgs) {
   const info = await authInfo(request, env);
   if (!info.user) return redirect("/login");
   try {
-    return { ...info, ...(await getSettings(request, env)) };
+    return {
+      ...info,
+      ...(await getSettings(request, env)),
+      publicUrl: configuration(env).app.publicUrl,
+    };
   } catch (error) {
     return throwHttpError(error);
   }
@@ -39,7 +44,7 @@ export default function Settings({ loaderData: d }: Route.ComponentProps) {
           <Link to="/staff">Manage staff</Link>
         </Button>
         <Button asChild variant="outline">
-          <Link to={`/d/${d.slug}`}>Open public site</Link>
+          <a href={`${d.publicUrl}/d/${d.slug}`}>Open public site</a>
         </Button>
       </div>
       <Card className="mt-6">

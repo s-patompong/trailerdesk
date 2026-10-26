@@ -212,7 +212,7 @@ async function verifyTurnstile(
   if (
     !result.success ||
     (config.app.environment === "production" &&
-      (result.hostname !== new URL(config.app.url).hostname ||
+      (result.hostname !== new URL(config.app.publicUrl).hostname ||
         result.action !== action))
   )
     throw new DomainError(

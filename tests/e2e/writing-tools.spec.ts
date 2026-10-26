@@ -7,7 +7,7 @@ test("VIN lookup prefills actual vPIC details and AI creates an editable draft w
 }) => {
   test.setTimeout(120000);
   const context = await browser.newContext({
-    baseURL: "http://localhost:5174",
+    baseURL: "http://app.localhost:5174",
   });
   try {
     await signInApi(context, "owner");

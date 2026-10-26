@@ -63,3 +63,9 @@ explicit limitations.
 - `pnpm build`: production client and Worker SSR bundles pass. Focused Playwright proof:
   embedded client validation/Queue/lead flow plus Owner, Manager and Sales dashboard/settings,
   4 tests passed. `pnpm secrets:check` reports no leaks.
+- 2026-10-27: local `admin.localhost`, `app.localhost` and `localhost` route through the
+  same Worker. Platform operators and dealership staff use separate Better Auth instances,
+  secrets, Postgres tables and host-only cookie prefixes; the public host has no auth realm.
+  Fast tests include a real platform sign-in whose cookie is rejected by dealership auth.
+  Focused Playwright verifies canonical redirects, wrong-host mutation rejection, platform
+  password recovery, cookie isolation and the public iframe inquiry flow.

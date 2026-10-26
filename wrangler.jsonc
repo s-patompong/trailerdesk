@@ -10,7 +10,9 @@
   "upload_source_maps": true,
   "vars": {
     "APP_ENV": "development",
-    "APP_URL": "http://localhost:5174",
+    "APP_URL": "http://app.localhost:5174",
+    "ADMIN_APP_URL": "http://admin.localhost:5174",
+    "PUBLIC_APP_URL": "http://localhost:5174",
     "EMAIL_DRIVER": "mailpit",
     "MAILPIT_URL": "http://127.0.0.1:18025",
     "EMAIL_FROM": "mail@trailerdesk.test",

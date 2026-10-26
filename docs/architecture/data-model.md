@@ -5,6 +5,9 @@ The first migration enables `vector` before creating embedding columns and index
 
 - `auth_user`, `auth_session`, `auth_account`, `auth_verification`, `auth_rate_limit`: identity.
 - `organization`, `member`, `invitation`: Better Auth dealership memberships.
+- `platform_auth_user`, `platform_auth_session`, `platform_auth_account`,
+  `platform_auth_verification`, `platform_auth_rate_limit`: the separate platform-admin
+  Better Auth realm. It intentionally has no dealership organization membership.
 - `dealership`: profile/settings; its primary key is the organization ID.
 - `public_forms`: rotatable public form keys, safe display copy and allowed embed origins.
 - `trailers`, `photos`: lot inventory and R2 references.
@@ -13,8 +16,10 @@ The first migration enables `vector` before creating embedding columns and index
 - `documents`, `chunks`: R2 documents and searchable text/768-dimensional embeddings.
 - `audit_log`, `email_deliveries`, `dev_outbox`, `failed_jobs`, `processed_jobs`: operations and retry evidence.
 
-Business tables carry `dealership_id`. Auth identities are global; users can belong
-to multiple organizations. Auth emails may have no dealership before membership exists.
+Business tables carry `dealership_id`. Dealership auth identities are global within the
+dealership realm, and users can belong to multiple organizations. Platform identities are
+stored separately and never establish dealership access. Auth emails may have no dealership
+before membership exists.
 All business filters must use `tenantWhere`; IDs from a request do not establish tenancy.
 Services must validate parent references in the same dealership before inserting child rows.
 Composite foreign keys should be considered when extending relationships; ordinary

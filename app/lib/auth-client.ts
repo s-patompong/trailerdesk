@@ -11,3 +11,7 @@ export const authClient = createAuthClient({
     organizationClient({ ac: organizationAccess, roles: organizationRoles }),
   ],
 });
+
+export const platformAuthClient = createAuthClient({
+  basePath: "/api/admin-auth",
+});

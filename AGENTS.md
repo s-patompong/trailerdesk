@@ -34,6 +34,8 @@ with a public inventory site. USD integer cents; UTC storage; dealership-local d
   central tenant helper; no ad hoc dealership filters in repositories.
 - Derive staff tenant context from a verified session and organization membership.
   Never trust a client-provided dealership or role.
+- Platform operators and dealership staff use separate Better Auth schemas, secrets and
+  host-only cookie prefixes. A platform identity never grants dealership access.
 - Enforce authorization in the permission module on the server; hiding UI is insufficient.
 - Sales must never receive dealer cost, margin or aggregate inventory value.
 - Scope child lookups and validate referenced parent rows within the same tenant.

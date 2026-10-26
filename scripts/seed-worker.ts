@@ -3,7 +3,7 @@ import { setTimeout } from "node:timers/promises";
 
 import { z } from "zod";
 
-const origin = "http://localhost:5174";
+const origin = "http://app.localhost:5174";
 async function running(): Promise<boolean> {
   try {
     const response = await fetch(`${origin}/api/health`, {

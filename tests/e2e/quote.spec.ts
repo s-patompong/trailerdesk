@@ -18,7 +18,7 @@ test("Sales can make an integer-cent quote and its PDF is stored and emailed", a
   browser,
 }) => {
   const context = await browser.newContext({
-    baseURL: "http://localhost:5174",
+    baseURL: "http://app.localhost:5174",
   });
   try {
     await signInApi(context, "sales");
@@ -67,7 +67,7 @@ test("mark sold runs the fast closing workflow once through all follow-up emails
 }) => {
   test.setTimeout(45000);
   const context = await browser.newContext({
-    baseURL: "http://localhost:5174",
+    baseURL: "http://app.localhost:5174",
   });
   let trailerId: string | undefined;
   try {

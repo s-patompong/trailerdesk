@@ -12,7 +12,7 @@ export async function signInApi(
     .poll(
       async () => {
         const login = await context.request.post("/api/auth/sign-in/email", {
-          headers: { Origin: "http://localhost:5174" },
+          headers: { Origin: "http://app.localhost:5174" },
           data: {
             email: `${role}@trailerdesk.test`,
             password: "TrailerDesk-Local-2026!",
@@ -28,7 +28,7 @@ export async function signInApi(
   const active = await context.request.post(
     "/api/auth/organization/set-active",
     {
-      headers: { Origin: "http://localhost:5174" },
+      headers: { Origin: "http://app.localhost:5174" },
       data: { organizationId: "ridgeline" },
     },
   );

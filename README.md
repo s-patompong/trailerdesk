@@ -24,15 +24,19 @@ pnpm db:seed
 pnpm dev
 ```
 
-Open [TrailerDesk locally](http://localhost:5174). The Cloudflare account needs a
+Open [TrailerDesk staff locally](http://app.localhost:5174). Platform administration uses
+[`admin.localhost`](http://admin.localhost:5174/login), while public inventory and forms use
+[`localhost`](http://localhost:5174/d/ridgeline). The Cloudflare account needs a
 workers.dev subdomain for remote AI development. Other bindings remain local.
 No deployment or cloud resource creation is part of these commands.
 
 Open the [embedded-form example](http://localhost:5174/embed-demo.html) to see the
-same-origin iframe loader, public configuration, validation and queued lead flow.
+versioned iframe loader, public configuration, validation and queued lead flow.
 
 Local-only accounts: `owner@trailerdesk.test`, `manager@trailerdesk.test`,
 `sales@trailerdesk.test`. All use **`TrailerDesk-Local-2026!`**. Never seed these into production.
+The separate platform realm uses `platform-admin@trailerdesk.test` with the same local-only
+password.
 
 ```sh
 pnpm check

@@ -7,7 +7,7 @@ for (const role of ["owner", "manager", "sales"] as const) {
     browser,
   }) => {
     const context = await browser.newContext({
-      baseURL: "http://localhost:5174",
+      baseURL: "http://app.localhost:5174",
     });
     try {
       await signInApi(context, role);

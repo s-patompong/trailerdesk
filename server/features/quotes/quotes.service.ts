@@ -119,7 +119,7 @@ export function emailQuote(request: Request, env: Env, id: string) {
       dealershipId: context.dealershipId,
       recipient: snapshot.customerEmail,
       subject: `Your trailer quote from ${snapshot.storeName}`,
-      body: `Hi ${snapshot.customerName},\n\nView your quote: ${configuration(env).app.url}/d/${snapshot.slug}/quotes/${quote.pdfToken}\n\nPlease contact us with any questions.`,
+      body: `Hi ${snapshot.customerName},\n\nView your quote: ${configuration(env).app.publicUrl}/d/${snapshot.slug}/quotes/${quote.pdfToken}\n\nPlease contact us with any questions.`,
       idempotencyKey: `quote:${quote.id}`,
     });
     return { sent: true };

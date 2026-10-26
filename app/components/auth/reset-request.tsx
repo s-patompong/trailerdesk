@@ -3,14 +3,14 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 
 import { resetRequest } from "../../../server/features/auth/account.schemas";
-import { authClient } from "../../lib/auth-client";
+import { authClient, platformAuthClient } from "../../lib/auth-client";
 import { TextField } from "../forms/text-field";
 import { Alert, AlertDescription } from "../ui/alert";
 import { Button } from "../ui/button";
 
 import type { z } from "zod";
 
-export function ResetRequest() {
+export function ResetRequest({ platform }: { platform: boolean }) {
   const [message, setMessage] = useState("");
   const form = useForm<z.infer<typeof resetRequest>>({
     resolver: zodResolver(resetRequest),
@@ -19,7 +19,8 @@ export function ResetRequest() {
   });
   const submit = form.handleSubmit(async (input) => {
     try {
-      const result = await authClient.requestPasswordReset({
+      const client = platform ? platformAuthClient : authClient;
+      const result = await client.requestPasswordReset({
         ...input,
         redirectTo: `${window.location.origin}/reset-password`,
       });

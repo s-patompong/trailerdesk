@@ -10,8 +10,12 @@ test("a private PDF is extracted and embedded through the Queue and remains priv
   request,
 }) => {
   test.setTimeout(90000);
-  const owner = await browser.newContext({ baseURL: "http://localhost:5174" });
-  const sales = await browser.newContext({ baseURL: "http://localhost:5174" });
+  const owner = await browser.newContext({
+    baseURL: "http://app.localhost:5174",
+  });
+  const sales = await browser.newContext({
+    baseURL: "http://app.localhost:5174",
+  });
   let documentId: string | undefined;
   try {
     await signInApi(owner, "owner");

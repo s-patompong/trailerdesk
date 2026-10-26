@@ -19,6 +19,8 @@ import { scheduled } from "./jobs/scheduled";
 import { handleAuth } from "./platform/context";
 import { validateEnv } from "./platform/env";
 import { errorResponse } from "./platform/errors";
+import { canonicalOriginResponse } from "./platform/origins";
+import { handlePlatformAuth } from "./platform/platform-session";
 
 const router = new Hono<{ Bindings: Env }>();
 router.route("/api/inventory", inventoryRoutes);
@@ -43,6 +45,9 @@ router.onError((error) => errorResponse(error));
 router.on(["GET", "POST"], "/api/auth/*", (context) =>
   handleAuth(context.req.raw, context.env),
 );
+router.on(["GET", "POST"], "/api/admin-auth/*", (context) =>
+  handlePlatformAuth(context.req.raw, context.env),
+);
 router.get("/api/health", (context) =>
   context.json({ status: "ok", app: "TrailerDesk" }),
 );
@@ -60,6 +65,8 @@ export default {
   queue,
   fetch(request, env, ctx) {
     validateEnv(env);
+    const canonicalResponse = canonicalOriginResponse(request, env);
+    if (canonicalResponse) return canonicalResponse;
     if (new URL(request.url).pathname.startsWith("/api/"))
       return router.fetch(request, env, ctx);
     return render(request);

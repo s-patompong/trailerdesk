@@ -11,7 +11,10 @@ const optionalSecret = z.string().min(1).optional();
 const server = {
   APP_ENV: z.enum(["development", "test", "staging", "production"]),
   APP_URL: z.url(),
+  ADMIN_APP_URL: z.url(),
+  PUBLIC_APP_URL: z.url(),
   BETTER_AUTH_SECRET: z.string().min(32),
+  ADMIN_AUTH_SECRET: z.string().min(32),
   EMAIL_FROM: z.email(),
   EMAIL_DRIVER: z.enum(["mailpit", "outbox", "mailtrap", "resend"]).optional(),
   ALLOW_LIVE_EMAIL: z
@@ -151,16 +154,31 @@ function requirements(value: Configuration, ctx: z.RefinementCtx): void {
     fail("Set both Google credentials together.");
   if (value.LLM_PROVIDER === "anthropic" && !value.ANTHROPIC_API_KEY)
     fail("Anthropic requires an API key.");
-  if (value.APP_ENV === "staging" && !value.APP_URL.startsWith("https://"))
+  if (
+    value.APP_ENV === "staging" &&
+    (!value.APP_URL.startsWith("https://") ||
+      !value.ADMIN_APP_URL.startsWith("https://") ||
+      !value.PUBLIC_APP_URL.startsWith("https://"))
+  )
     fail("Staging requires HTTPS.");
   if (
     value.APP_ENV === "production" &&
     (value.DEMO_FAST_TIME ||
       !value.APP_URL.startsWith("https://") ||
+      !value.ADMIN_APP_URL.startsWith("https://") ||
+      !value.PUBLIC_APP_URL.startsWith("https://") ||
       value.TURNSTILE_SECRET_KEY.startsWith("1x0000") ||
-      value.BETTER_AUTH_SECRET.startsWith("local-only"))
+      value.BETTER_AUTH_SECRET.startsWith("local-only") ||
+      value.ADMIN_AUTH_SECRET.startsWith("local-only"))
   )
     fail("Production requires HTTPS, real secrets, and normal timing.");
+  const origins = [
+    value.APP_URL,
+    value.ADMIN_APP_URL,
+    value.PUBLIC_APP_URL,
+  ].map((url) => new URL(url).origin);
+  if (new Set(origins).size !== origins.length)
+    fail("Admin, staff, and public URLs must use different origins.");
   if (!(
     value.AGING_NOTICE_DAYS < value.AGING_WARNING_DAYS &&
     value.AGING_WARNING_DAYS < value.AGING_CRITICAL_DAYS

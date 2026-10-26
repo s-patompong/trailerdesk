@@ -3,14 +3,20 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 
 import { newPassword } from "../../../server/features/auth/account.schemas";
-import { authClient } from "../../lib/auth-client";
+import { authClient, platformAuthClient } from "../../lib/auth-client";
 import { TextField } from "../forms/text-field";
 import { Alert, AlertDescription } from "../ui/alert";
 import { Button } from "../ui/button";
 
 import type { z } from "zod";
 
-export function NewPassword({ token }: { token: string }) {
+export function NewPassword({
+  token,
+  platform,
+}: {
+  token: string;
+  platform: boolean;
+}) {
   const [message, setMessage] = useState("");
   const form = useForm<z.infer<typeof newPassword>>({
     resolver: zodResolver(newPassword),
@@ -19,7 +25,8 @@ export function NewPassword({ token }: { token: string }) {
   });
   const submit = form.handleSubmit(async (input) => {
     try {
-      const result = await authClient.resetPassword({
+      const client = platform ? platformAuthClient : authClient;
+      const result = await client.resetPassword({
         newPassword: input.password,
         token,
       });

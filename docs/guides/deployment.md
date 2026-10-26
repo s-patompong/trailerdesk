@@ -24,15 +24,16 @@ without an explicit reviewed seed decision.
 
 Google redirect URIs, with the current auth base path:
 
-- Local: `http://localhost:5174/api/auth/callback/google`
-- Local alternate host: `http://127.0.0.1:5174/api/auth/callback/google`
-- Production: `https://trailerdesk.<ACCOUNT_SUBDOMAIN>.workers.dev/api/auth/callback/google`
+- Local: `http://app.localhost:5174/api/auth/callback/google`
+- Production: `https://app.<YOUR_DOMAIN>/api/auth/callback/google`
 
-The account dashboard currently displays `p-pangpond.workers.dev`; if retained,
-the planned production callback would be
-`https://trailerdesk.p-pangpond.workers.dev/api/auth/callback/google`.
-The app is not deployed there. Configure `APP_URL` to the actual final origin.
-Set both Google secrets to enable the button. Production OAuth verification is pending.
+The app is not deployed there. Configure `ADMIN_APP_URL`, `APP_URL` and `PUBLIC_APP_URL`
+to the final platform-admin, dealership-staff and public origins. Map all three fixed hosts
+to this same Worker with [Custom Domains](https://developers.cloudflare.com/workers/configuration/routing/custom-domains/)
+or reviewed route patterns. The two Better Auth realms use different production secrets
+and host-only cookies; do not enable cross-subdomain cookies. Dealership Google OAuth stays
+on `APP_URL`, while public inventory and embeds stay on `PUBLIC_APP_URL`. Set both Google
+secrets to enable the button. Production OAuth verification is pending.
 
 Production Zod validation rejects local auth secrets, test Turnstile keys, fast demo
 timing, HTTP origins and dev outbox email. Set secrets using `wrangler secret put`.
